@@ -1,0 +1,100 @@
+---
+title: "Travel and Education: Data wrangling and imputation"
+author: "So Young Park"
+date: '2017 2 27 '
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+setwd("~/Box Sync/education and travel")
+library(knitr)
+library(dplyr)
+
+set.seed(20181205)
+opts_chunk$set(fig.path="~/Box Sync/education and travel/R/", 
+		eval=TRUE, echo=TRUE, 
+		warning=FALSE, message=FALSE,
+    fig.ext="pdf")
+```
+
+```{r data read}
+library(haven)
+data <- read_dta("~/Box Sync/education and travel/eclsk_1998/data/initial_data_0515.dta")
+#View(regression_data_0515)
+
+dim(data) #initial data with 124 variables - 21409 observations
+dim(data[complete.cases(data),]) #only 1392 observations have complete cases
+
+# Exploratory analysis:
+library(VIM)
+library(yaImpute)
+#aggr(data, prop = T, numbers = T, main = "Missing values vs observed, Full Data")
+```
+
+```{r}
+#Our final models were reading5~white+black+asian+hisapnic+gender+trip2+trip3+trip5+reading2+ses+noenglish+expect+timewithchild
+
+#reading5~white+black+asian+hisapnic+gender+museum2+zoo2+concert2+sport2+reading2+ses+noenglish+expect+timewithchild
+
+lapply(data[1:124], function(x) sum(is.na(x))/length(x)) #third period has 16339 (76.32%) missing. Let's keep only the first, second and fifth period of data
+which(colnames(data)=="C4SCREEN")
+colnames(data)[73] <- "C5SCREEN" #change noenlgish 4 to 5 for reshaping purpose
+data_nt <- data %>%
+  select(-contains("P3")) %>%
+  select(-contains("P4")) %>%
+  select(-contains("P6")) %>%
+  select(-contains("P7")) %>%
+  select(-contains("C3")) %>%
+  select(-contains("C4")) %>%
+  select(-contains("W3")) %>%
+  select(-contains("W7"))%>%
+  select(-contains("W8"))%>%
+  select(-contains("C1_5"))%>%
+  select(-contains("C1_7"))%>%
+  select(-contains("EMP"))%>%
+  select(-contains("SSCL"))%>%
+  select(-contains("GSCAL"))%>%
+  select(-contains("T6"))
+
+dim(data_nt) #Total 67 variables left. 21409 observations
+dim(data_nt[complete.cases(data_nt),]) #5396 observations have complete cases
+#missing data percentage
+lapply(data_nt[1:67], function(x) sum(is.na(x))/length(x)) #C6 and C7 reading and math scores are missing 47.2% and 56.5% of data.
+
+#Remove period 6,7 reading and math score.
+data_nt <- data_nt %>%
+  select(-"C6R4RSCL", -"C6R4MSCL", -"C7R4RSCL", -"C7R4MSCL")
+
+dim(data_nt) #Total 63 variables left. 21409 observations
+dim(data_nt[complete.cases(data_nt),]) #6322 observations have complete cases
+#missing data percentage
+lapply(data_nt[1:63], function(x) sum(is.na(x))/length(x)) # highest missing percentage is 0.4863842 for mom/dad education and job prestige score.
+```
+
+```{r}
+#imputation using VIM package
+weight <- select(data_nt, C245PW0)
+data_nt <- select(data_nt, -contains("C245PW0")) # remove the weight variable
+
+# Specify variable type
+cols1 <- c("CREGION", "GENDER", "RACE", "C1SCREEN", "C2SCREEN", "C5SCREEN", 
+           "P2CONCRT", "P2MUSEUM", "P2ZOO", "P2SPORT") # categorical
+cols2 <- c("P1READBO", "P1TELLST", "P1SINGSO", "P1HELPAR", "P1GAMES", "P1NATURE", "P1BUILD",
+           "P1EXPECT", "WKMOMED", "WKDADED", "W1MOMED", "W1DADED", "W5MOMED", "W5DADED", 
+           "P5EXPECT", "P5TELLST", "P5SINGSO", "P5HELPAR", "P5GAMES", "P5NATURE", "P5BUILD", 
+           "P5SPORT", "P5READBO", "P5CONCRT", "P5MUSEUM", "P5ZOO", "P5SPTEVT") # ordinal
+
+data_nt1 <- data_nt # keep data_nt with the labels for future use.
+
+# Use lapply() to coerce and replace the chosen columns to factors:
+data_nt1[cols1] <- lapply(data_nt1[cols1], factor)
+data_nt1[cols2] <- lapply(data_nt1[cols2], ordered)
+
+library(mice)
+data.mice <- mice(data_nt1,m=5,maxit=5,seed=500)
+save(data.mice, file="data_mice.RData")
+
+data.knn <- VIM::kNN(data_nt1, k = 3, weights = NULL, numFun = median, catFun = maxCat, impNA = TRUE, trace = TRUE, imp_var = TRUE, imp_suffix = "imp", addRandom = FALSE, useImputedDist = TRUE, weightDist = FALSE) #median
+save(data.knn, file="data_knn.RData")
+```
