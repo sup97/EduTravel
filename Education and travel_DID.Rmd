@@ -199,7 +199,7 @@ data_wide <- spread(data_rs, variable, value)
 data_wide$time2 = ifelse(data_wide$round >= 2, 1, 0)
 data_wide$time5 = ifelse(data_wide$round >= 5, 1, 0)
 
-data_wide[8:33] <- lapply(data_wide[8:33], as.numeric)
+data_wide[6:37] <- lapply(data_wide[6:37], as.numeric)
 dim(data_wide)
 
 data <- data_wide[!is.na(data_wide$CHILDID),]
@@ -208,17 +208,16 @@ dim(data)
 ```
 
 ```{r}
-data[8:37] <- apply(data[8:37], 2, function(x) {ifelse(x < 0, NA, x)}) 
-data[8:37] <- lapply(data[8:37], as.numeric)
+travel <- cbind(data[14], data[24], data[35], data[31])
+summary(travel)
 
-newdata <- newdata[!is.na(newdata$CHILDID),]
-summary(newdata$EXPECT)
+data$trip <- rowSums(travel, na.rm = FALSE)
+summary(data$trip)
 
-if(data$round==2 | data$round==5){
-data <- data %>%
-  mutate(trip = CONCRT+MUSEUM+ZOO+SPORT)
-}
-
+which(colnames(data)=="CONCRT")
+which(colnames(data)=="MUSEUM")
+which(colnames(data)=="ZOO")
+which(colnames(data)=="SPORT")
 summary(data$trip)
 
 data_wide$treated = ifelse(data_wide$country == "E" |
