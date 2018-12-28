@@ -208,10 +208,11 @@ dim(data)
 ```
 
 ```{r}
-travel <- cbind(data[14], data[24], data[35], data[31])
+dataNA <- as.data.frame(lapply(data, function(x) ifelse(x < 0, NA, x)))
+travel <- cbind(dataNA[14], dataNA[24], dataNA[35], dataNA[31])
 summary(travel)
 
-data$trip <- rowSums(travel, na.rm = FALSE)
+dataNA$trip <- rowSums(travel, na.rm = FALSE)
 summary(data$trip)
 
 which(colnames(data)=="CONCRT")
