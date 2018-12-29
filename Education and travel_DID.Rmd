@@ -196,34 +196,80 @@ data_rs$round <- gsub("[a-zA-Z ]", "", data_rs$round)
 
 ```{r wide format}
 data_wide <- spread(data_rs, variable, value)
-data_wide$time2 = ifelse(data_wide$round >= 2, 1, 0)
-data_wide$time5 = ifelse(data_wide$round >= 5, 1, 0)
-
-data_wide[6:37] <- lapply(data_wide[6:37], as.numeric)
+data_wide[8:35] <- lapply(data_wide[8:35], as.numeric)
 dim(data_wide)
-
-data <- data_wide[!is.na(data_wide$CHILDID),]
-data <- distinct(data)
-dim(data)
 ```
 
 ```{r}
-dataNA <- as.data.frame(lapply(data, function(x) ifelse(x < 0, NA, x)))
-travel <- cbind(dataNA[14], dataNA[24], dataNA[35], dataNA[31])
-summary(travel)
+data <- data_wide[!is.na(data_wide$CHILDID),]
+data <- distinct(data)
+dim(data)
 
-dataNA$trip <- rowSums(travel, na.rm = FALSE)
+#reorder the columns
+tripCols <- c("CHILDID", "PARENTID", "S1_ID", "CREGION", "DOBYY", "GENDER", "RACE", "CONCRT", "MUSEUM", "ZOO", "SPORT")
+data <- data[, c(tripCols, setdiff(names(data), tripCols))]
+
+#change negative values to 0 for trip variables and NA for the other variables
+summary(data[8:11])
+data[8:11] <- as.data.frame(lapply(data[8:11], function(x) ifelse(x < 0, 0, x)))
+summary(data[8:11])
+
+data[12:35] <- as.data.frame(lapply(data[12:35], function(x) ifelse(x < 0, NA, x)))
+#summary(data[12:35])
+
+#create trip variable - sum of four trip variables
+data$trip <- rowSums(data[8:11], na.rm = FALSE)
 summary(data$trip)
 
-which(colnames(data)=="CONCRT")
-which(colnames(data)=="MUSEUM")
-which(colnames(data)=="ZOO")
-which(colnames(data)=="SPORT")
-summary(data$trip)
+#create time spent with children- sum of nine variables
+twcCols <- c("BUILD", "GAMES", "HELPAR", "NATURE", "READBO", "SINGSO", "SPRTS", "TELLST")
+data <- data[, c(setdiff(names(data), twcCols), twcCols)]
+summary(data[29:36])
 
-data_wide$treated = ifelse(data_wide$country == "E" |
-                             data_wide$country == "F" |
-                             data_wide$country == "G", 1, 0)
+data$timeWchildren <- rowSums(data[29:36], na.rm = TRUE)
+data$timeWchildren <- ifelse(data$timeWchildren==0, NA, data$timeWchildren)
+summary(data$timeWchildren)
+
+```
+
+```{r create did variables}
+#create time variable
+data$time = ifelse(data$round > 2, 1, 0)
+
+#create treated variable - if took at least one trip, 1, else 0
+data$treated = ifelse(data$trip > 0, 1, 0)
+data$treated = ifelse(data$trip > 0, 1, 0)
+
+#create did variable - an interaction between time and treated
+data$did = data$time * data$treated
+```
+
+```{r}
+dataplot <- data[which(!is.na(data$trip) & !is.na(data$R4MSCL)),]
+data$math5 <- data$R4MSCL[data$round==5]
+data$reading5 <- data$R4RSCL[data$round==5]
+
+boxplot(math5~trip, data=data, main=toupper(""), font.main=3, cex.main=1.2, xlab="Number of trips", ylab="Math Score", font.lab=3, col="darkgreen")
+
+boxplot(reading5~CONCRT, data=data, main=toupper(""), font.main=3, cex.main=1.2, col=c("red","blue", "yellow", "green"), xlab="Number of trips", ylab="Reading Score", font.lab=3, notch=TRUE, range = 0)
+```
+
+
+```{r did regression}
+#propensity score matching
+install.packages("MatchIt")
+
+m.out = matchit(R4MSCL ~ EXPECT + LEARN + timeWchildren + DADED + DADSCR + MOMED + MOMSCR + SCREEN + TINCTH, data = data, method = "nearest", ratio = 1)
+summary(m.out)
+plot(m.out, type = "jitter")
+plot(m.out, type = "hist")
+
+didreg <- lm(R4MSCL ~ treated*time + EXPECT + LEARN + timeWchildren + DADED + DADSCR + MOMED + MOMSCR + SCREEN + TINCTH + white + black + asian, data = data)
+summary(didreg)
+
+
+xvar <- c(trip )
+
 ```
 
 
