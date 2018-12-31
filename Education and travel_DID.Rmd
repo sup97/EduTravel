@@ -251,7 +251,6 @@ data$didZ = data$time * data$treatedZ
 ```
 
 ```{r}
-dataplot <- data[which(!is.na(data$trip) & !is.na(data$R4MSCL)),]
 data$math5 <- data$R4MSCL[data$round==5]
 data$reading5 <- data$R4RSCL[data$round==5]
 
@@ -266,7 +265,9 @@ boxplot(reading5~CONCRT, data=data, main=toupper(""), font.main=3, cex.main=1.2,
 #install.packages("MatchIt")
 library(MatchIt)
 
-m.out = matchit(R4MSCL ~ EXPECT + LEARN + timeWchildren + DADED + DADSCR + MOMED + MOMSCR + SCREEN + TINCTH, data = data, method = "nearest", ratio = 1)
+m.out = matchit(reading5 ~ EXPECT + LEARN + timeWchildren + DADED + DADSCR + MOMED + MOMSCR + SCREEN + TINCTH, data = data, method = "nearest", ratio = 1)
+
+
 summary(m.out)
 plot(m.out, type = "jitter")
 plot(m.out, type = "hist")
