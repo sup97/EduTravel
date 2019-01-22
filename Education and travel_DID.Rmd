@@ -15,6 +15,8 @@ rm(list=ls())
 #load imputed data
 setwd("C:/Users/soyou/Box Sync/education and travel/R")
 load("C:/Users/soyou/Box Sync/education and travel/R/data_imp.RData")
+#setwd("~/Box Sync/education and travel/R")
+#load("~/Box Sync/education and travel/R/data_knn.RData")
 #summary(data.knn)
 
 #delete imputation information variables
@@ -237,7 +239,6 @@ summary(data[29:36])
 data$timeWchildren <- rowSums(data[29:36], na.rm = TRUE)
 data$timeWchildren <- ifelse(data$timeWchildren==0, NA, data$timeWchildren)
 summary(data$timeWchildren)
-
 ```
 
 ```{r create did variables}
@@ -245,41 +246,40 @@ summary(data$timeWchildren)
 data$time = ifelse(data$round > 2, 1, 0)
 
 #create treated variable - if took at least one trip, 1, else 0
-data$treated = ifelse(data$trip > 0, 1, 0)
-data$treated = ifelse(data$trip > 0, 1, 0)
+data$treated = ifelse(data$trip[data$round==2] > 0, 1, 0)
+data$treatedM = ifelse(data$MUSEUM[data$round==2] > 0, 1, 0)
+data$treatedS = ifelse(data$SPORT[data$round==2] > 0, 1, 0)
+data$treatedC = ifelse(data$CONCRT[data$round==2] > 0, 1, 0)
+data$treatedZ = ifelse(data$ZOO[data$round==2] > 0, 1, 0)
 
 #create did variable - an interaction between time and treated
 data$did = data$time * data$treated
 
 write.csv(data, file="final_data.csv", row.names = FALSE)
+data$didM = data$time * data$treatedM
+data$didS = data$time * data$treatedS
+data$didC = data$time * data$treatedC
+data$didZ = data$time * data$treatedZ
 ```
 
 ```{r}
-dataplot <- data[which(!is.na(data$trip) & !is.na(data$R4MSCL)),]
 data$math5 <- data$R4MSCL[data$round==5]
 data$reading5 <- data$R4RSCL[data$round==5]
 
 boxplot(math5~trip, data=data, main=toupper(""), font.main=3, cex.main=1.2, xlab="Number of trips", ylab="Math Score", font.lab=3, col="darkgreen")
 
-boxplot(reading5~CONCRT, data=data, main=toupper(""), font.main=3, cex.main=1.2, col=c("red","blue", "yellow", "green"), xlab="Number of trips", ylab="Reading Score", font.lab=3, notch=TRUE, range = 0)
+boxplot(reading5~treated, data=data, main=toupper(""), font.main=3, cex.main=1.2, col="green", xlab="Number of trips", ylab="Reading Score", font.lab=3, range = 0)
 ```
 
 
 ```{r did regression}
 #propensity score matching
-install.packages("MatchIt")
+#install.packages("MatchIt")
 
-m.out = matchit(R4MSCL ~ EXPECT + LEARN + timeWchildren + DADED + DADSCR + MOMED + MOMSCR + SCREEN + TINCTH, data = data, method = "nearest", ratio = 1)
-summary(m.out)
-plot(m.out, type = "jitter")
-plot(m.out, type = "hist")
 
-didreg <- lm(R4MSCL ~ treated*time + EXPECT + LEARN + timeWchildren + DADED + DADSCR + MOMED + MOMSCR + SCREEN + TINCTH + white + black + asian, data = data)
+didreg <- lm(R4MSCL ~ treatedM + EXPECT + LEARN + timeWchildren + DADED + DADSCR + MOMED + MOMSCR + SCREEN + TINCTH + white + black + asian, data = data)
+
 summary(didreg)
-
-
-xvar <- c(trip )
-
 ```
 
 
