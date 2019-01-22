@@ -14,13 +14,16 @@ rm(list=ls())
 
 #load imputed data
 setwd("C:/Users/soyou/Box Sync/education and travel/R")
-load("C:/Users/soyou/Box Sync/education and travel/R/data_knn.RData")
+load("C:/Users/soyou/Box Sync/education and travel/R/data_imp.RData")
 #summary(data.knn)
 
 #delete imputation information variables
-data_cs <- data.knn[1:62]
+#data_cs <- data.knn[1:62]
+data_cs <- data_nt_imp[1:72]
+
 summary(data_cs)
 dim(data_cs)
+dim(data_nt_imp)
 ```
 
 
@@ -163,26 +166,29 @@ summary(data_cs$W5DADED)
 #which(colnames(data_cs)=="P5SPTEVT")
 #which(colnames(data_cs)=="P1SPORT")
 #which(colnames(data_cs)=="WKMOMED")
+data_org <- data_cs
+data_cs <- select(data_cs, -"C6R4RSCL", -"C6R4MSCL", -"C6R2SSCL", -"C7R4RSCL", -"C7R4MSCL", -"C7R2SSCL", -"C7R4RSCL", -"C7R4MSCL", -"C7R2SSCL", -"T4LEARN", -"T6LEARN", -"C1RGSCAL", -"C2RGSCAL", -"C5R2SSCL")
+colnames(data_cs)
 
 #change the column names to avoid confusion
-colnames(data_cs)[43] <- "P1SPRTS"
-colnames(data_cs)[56] <- "P5SPRTS"
-colnames(data_cs)[61] <- "P5SPORT"
+colnames(data_cs)[42] <- "P1SPRTS"
+colnames(data_cs)[55] <- "P5SPRTS"
+colnames(data_cs)[60] <- "P5SPORT"
 
-colnames(data_cs)[18] <- "W0MOMED"
-colnames(data_cs)[19] <- "W0DADED"
-colnames(data_cs)[20] <- "W0MOMSCR"
-colnames(data_cs)[21] <- "W0DADSCR"
-colnames(data_cs)[22] <- "W0INCOME"
+colnames(data_cs)[17] <- "W0MOMED"
+colnames(data_cs)[18] <- "W0DADED"
+colnames(data_cs)[19] <- "W0MOMSCR"
+colnames(data_cs)[20] <- "W0DADSCR"
+colnames(data_cs)[21] <- "W0INCOME"
 colnames(data_cs)
 
 #change to panel format
 data_rs <- reshape(data = data_cs, 
                    idvar = "CHILDID", 
-                   varying = c("C1R4RSCL", 	 "C1R4MSCL", "C2R4RSCL", 	"C2R4MSCL", 	"C5R4RSCL", 	"C5R4MSCL", 	"T1LEARN", 	"T2LEARN", 	"T4LEARN", 	"T5LEARN", 	"W0MOMED", "W0DADED", 	"W0MOMSCR", 	"W0DADSCR", 	"W0INCOME", 	"W1MOMED", 	"W1DADED", 	"W1MOMSCR", 	"W1DADSCR", 	"W1INCOME", "W5MOMED", 	"W5DADED", 	"W5MOMSCR", 	"W5DADSCR", 	"C1SCREEN", 	"C2SCREEN", 	"C5SCREEN", 	"P1EXPECT", 	"P1READBO", "P1TELLST", 	"P1SINGSO", 	"P1HELPAR", 	"P1GAMES", 	"P1NATURE", 	"P1BUILD", 	"P1SPRTS", 	"P2CONCRT", 	"P2MUSEUM", "P2ZOO", 	"P2SPORT", 	"P2INCOME", 	"P5EXPECT", 	"P5TELLST", 	"P5SINGSO", 	"P5HELPAR", 	"P5GAMES", 	"P5NATURE", "P5BUILD", 	"P5SPRTS", 	"P5READBO", 	"P5CONCRT", 	"P5MUSEUM", 	"P5ZOO", 	"P5SPORT", 	"P5TINCTH"), 
+                   varying = c("C1R4RSCL", 	 "C1R4MSCL", "C2R4RSCL", 	"C2R4MSCL", 	"C5R4RSCL", 	"C5R4MSCL", 	"T1LEARN", 	"T2LEARN", 	"T5LEARN", 	"W0MOMED", "W0DADED", 	"W0MOMSCR", 	"W0DADSCR", 	"W0INCOME", 	"W1MOMED", 	"W1DADED", 	"W1MOMSCR", 	"W1DADSCR", 	"W1INCOME", "W5MOMED", 	"W5DADED", 	"W5MOMSCR", 	"W5DADSCR", 	"C1SCREEN", 	"C2SCREEN", 	"C5SCREEN", 	"P1EXPECT", 	"P1READBO", "P1TELLST", 	"P1SINGSO", 	"P1HELPAR", 	"P1GAMES", 	"P1NATURE", 	"P1BUILD", 	"P1SPRTS", 	"P2CONCRT", 	"P2MUSEUM", "P2ZOO", 	"P2SPORT", 	"P2INCOME", 	"P5EXPECT", 	"P5TELLST", 	"P5SINGSO", 	"P5HELPAR", 	"P5GAMES", 	"P5NATURE", "P5BUILD", 	"P5SPRTS", 	"P5READBO", 	"P5CONCRT", 	"P5MUSEUM", 	"P5ZOO", 	"P5SPORT", 	"P5TINCTH"), 
                    v.names = "value",
                    timevar = "period", 
-                   times = c("C1R4RSCL", 	 "C1R4MSCL", "C2R4RSCL", 	"C2R4MSCL", 	"C5R4RSCL", 	"C5R4MSCL", 	"T1LEARN", 	"T2LEARN", 	"T4LEARN", 	"T5LEARN", 	"W0MOMED", "W0DADED", 	"W0MOMSCR", 	"W0DADSCR", 	"W0INCOME", 	"W1MOMED", 	"W1DADED", 	"W1MOMSCR", 	"W1DADSCR", 	"W1INCOME", "W5MOMED", 	"W5DADED", 	"W5MOMSCR", 	"W5DADSCR", 	"C1SCREEN", 	"C2SCREEN", 	"C5SCREEN", 	"P1EXPECT", 	"P1READBO", "P1TELLST", 	"P1SINGSO", 	"P1HELPAR", 	"P1GAMES", 	"P1NATURE", 	"P1BUILD", 	"P1SPRTS", 	"P2CONCRT", 	"P2MUSEUM", "P2ZOO", 	"P2SPORT", 	"P2INCOME", 	"P5EXPECT", 	"P5TELLST", 	"P5SINGSO", 	"P5HELPAR", 	"P5GAMES", 	"P5NATURE", "P5BUILD", 	"P5SPRTS", 	"P5READBO", 	"P5CONCRT", 	"P5MUSEUM", 	"P5ZOO", 	"P5SPORT", 	"P5TINCTH"), 
+                   times = c("C1R4RSCL", 	 "C1R4MSCL", "C2R4RSCL", 	"C2R4MSCL", 	"C5R4RSCL", 	"C5R4MSCL", 	"T1LEARN", 	"T2LEARN",	"T5LEARN", 	"W0MOMED", "W0DADED", 	"W0MOMSCR", 	"W0DADSCR", 	"W0INCOME", 	"W1MOMED", 	"W1DADED", 	"W1MOMSCR", 	"W1DADSCR", 	"W1INCOME", "W5MOMED", 	"W5DADED", 	"W5MOMSCR", 	"W5DADSCR", 	"C1SCREEN", 	"C2SCREEN", 	"C5SCREEN", 	"P1EXPECT", 	"P1READBO", "P1TELLST", 	"P1SINGSO", 	"P1HELPAR", 	"P1GAMES", 	"P1NATURE", 	"P1BUILD", 	"P1SPRTS", 	"P2CONCRT", 	"P2MUSEUM", "P2ZOO", 	"P2SPORT", 	"P2INCOME", 	"P5EXPECT", 	"P5TELLST", 	"P5SINGSO", 	"P5HELPAR", 	"P5GAMES", 	"P5NATURE", "P5BUILD", 	"P5SPRTS", 	"P5READBO", 	"P5CONCRT", 	"P5MUSEUM", 	"P5ZOO", 	"P5SPORT", 	"P5TINCTH"), 
                    direction = "long")
 
 data_rs <- data_rs %>% 
@@ -195,7 +201,9 @@ data_rs$round <- gsub("[a-zA-Z ]", "", data_rs$round)
 ```
 
 ```{r wide format}
+data_rs[] <- lapply(data_rs, unclass)
 data_wide <- spread(data_rs, variable, value)
+colnames(data_wide)
 data_wide[8:35] <- lapply(data_wide[8:35], as.numeric)
 dim(data_wide)
 ```
@@ -242,6 +250,8 @@ data$treated = ifelse(data$trip > 0, 1, 0)
 
 #create did variable - an interaction between time and treated
 data$did = data$time * data$treated
+
+write.csv(data, file="final_data.csv", row.names = FALSE)
 ```
 
 ```{r}
