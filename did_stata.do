@@ -1,5 +1,10 @@
 import delimited C:\Users\soyou\Documents\GitHub\EduTravel\final_data.csv, clear
 
+merge m:m childid using weights
+br childid C245PW0 
+
+drop if C245PW0==. | C245PW0==0
+
 set more off
 
 drop did
@@ -55,22 +60,24 @@ bysort childid (round): replace tconcrt = 1 if concrt > 0 & round == 2
 bysort childid (round): replace tzoo = 1 if zoo > 0 & round == 2
 bysort childid (round): replace tsport = 1 if sport > 0 & round == 2
 
-bysort childid (round): replace tmuseum = tmuseum[3] 
-bysort childid (round): replace tconcrt = tconcrt[3] 
-bysort childid (round): replace tzoo = tzoo[3] 
-bysort childid (round): replace tsport = tsport[3] 
+bysorqui pscore treated1 gender white black asian expect learn ///
+screen timewchildren ses, pscore(psm) blockid(psm_block) detail
+psgraph, treated(treated1) pscore(psm)
+qui psmatch2 treated1, outcome(reading) pscore(psm)
+qui psmatch2 treated1, outcome(math) pscore(psm)
 
-drop if reading ==.
+qui pstest gender white black asian expect learn ///
+screen timewchildren ses, treated(treated1) both graph
 
-* DID without cov*
-diff reading, t(treated) p(time)
-diff math, t(treated) p(time)
+diff reading, t(treated1) p(time) cov(gender white black asian expect learn ///
+screen timewchildren ses) ps(psm) robust report //
+screen timewchildren ses) ps(psm) robust report reading, t(treated1) p(time) cov(gender white black asian expect learn ///
+screen timewchildren ses) ps(psm) robust report 
 
-*DID with cov*
+
 diff reading, t(treated1) p(time) cov(gender white black asian expect learn ///
 screen timewchildren ses) robust kernel id(childid) report
 
-set more off
 diff reading, t(tmuseum) p(time) cov(gender white black asian expect learn ///
 screen timewchildren ses) kernel id(childid) robust test report
 
