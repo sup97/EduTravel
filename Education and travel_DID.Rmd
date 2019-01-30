@@ -10,15 +10,19 @@ library(tidyr)
 
 ```{r load imputed data}
 #clear environment
+library(mice)
 rm(list=ls())
 
 #load imputed data
-setwd("C:/Users/soyou/Box Sync/education and travel/R")
-load("C:/Users/soyou/Box Sync/education and travel/R/data_imp.RData")
+setwd("~/Documents/GitHub/EduTravel")
+load("~/Documents/GitHub/EduTravel/data_imp.RData")
+
+data_nt_imp <- as.mids(data_nt_imp, .imp="_imp")
+
 #setwd("~/Box Sync/education and travel/R")
 #load("~/Box Sync/education and travel/R/data_knn.RData")
 #summary(data.knn)
-
+densityplot(data_nt_imp, ~reading|.data_nt_imp)
 #delete imputation information variables
 #data_cs <- data.knn[1:62]
 data_cs <- data_nt_imp[1:72]

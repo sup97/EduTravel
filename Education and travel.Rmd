@@ -20,7 +20,7 @@ opts_chunk$set(fig.path="~/Box Sync/education and travel/R/",
 
 ```{r data read}
 library(haven)
-data <- read_dta("C:/Users/soyou/Box Sync/education and travel/eclsk_1998/data/initial_data_0515.dta")
+data <- read_dta("~/Box Sync/Research/Educational benefits/education and travel/eclsk_1998/data/initial_data_0515.dta")
 #View(regression_data_0515)
 
 dim(data) #initial data with 124 variables - 21409 observations
@@ -95,7 +95,7 @@ data_nt1[cols2] <- lapply(data_nt1[cols2], ordered)
 #write.csv(data_nt1, file="original_data.csv")
 
 library(mice)
-data.mice <- mice(data_nt1,m=5,maxit=5,seed=500)
+data.mice <- mice(data_nt1,m=25,maxit=25,seed=500)
 save(data.mice, file="data_mice.RData")
 
 data.knn <- VIM::kNN(data_nt1, k = 3, weights = NULL, numFun = median, catFun = maxCat, impNA = TRUE, trace = TRUE, imp_var = TRUE, imp_suffix = "imp", addRandom = FALSE, useImputedDist = TRUE, weightDist = FALSE) #median
