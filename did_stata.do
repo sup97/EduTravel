@@ -1,5 +1,10 @@
-import delimited C:\Users\soyou\Documents\GitHub\EduTravel\final_data.csv, clear
 
+import delimited /Users/soyoung/Documents/GitHub/EduTravel/final_data.csv, clear
+keep CHILDID C245PW0
+rename CHILDID childid
+save weights, replace
+
+import delimited /Users/soyoung/Documents/GitHub/EduTravel/final_data.csv, clear
 merge m:m childid using weights
 br childid C245PW0 
 
