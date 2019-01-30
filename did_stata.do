@@ -88,27 +88,27 @@ graph save Graph "/Users/soyoung/Documents/GitHub/EduTravel/stdgraph.gph"
 
 diff reading, t(treated1) p(time) cov(gender white black asian expect learn ///
 screen timewchildren ses) ps(psm) robust report //
-screen timewchildren ses) ps(psm) robust report reading, t(treated1) p(time) cov(gender white black asian expect learn ///
-screen timewchildren ses) ps(psm) robust report 
-
-
-diff reading, t(treated1) p(time) cov(gender white black asian expect learn ///
-screen timewchildren ses) robust kernel id(childid) report
-
-diff reading, t(tmuseum) p(time) cov(gender white black asian expect learn ///
-screen timewchildren ses) kernel id(childid) robust test report
-
-diff reading, t(tconcrt) p(time) cov(gender white black asian expect learn ///
-screen timewchildren ses) robust report
-
-diff reading, t(tzoo) p(time) cov(gender white black asian expect learn ///
-screen timewchildren ses) robust report
-
-diff reading, t(tsport) p(time) cov(gender white black asian expect learn ///
-screen timewchildren ses) robust report
 
 diff math, t(treated1) p(time) cov(gender white black asian expect learn ///
-screen timewchildren ses) robust report
+screen timewchildren ses) ps(psm) robust report //
+
+//museum
+qui pscore treated1 gender white black asian expect learn ///
+screen timewchildren ses, pscore(psm) blockid(psm_block) detail
+psgraph, treated(treated1) pscore(psm)
+graph save Graph "/Users/soyoung/Documents/GitHub/EduTravel/psmgraph.gph", replace
+psmatch2 treated1, outcome(reading) pscore(psm) ate com
+psmatch2 treated1, outcome(math) pscore(psm)
+
+qui pstest gender white black asian expect learn ///
+screen timewchildren ses, treated(treated1) both graph
+graph save Graph "/Users/soyoung/Documents/GitHub/EduTravel/stdgraph.gph"
+
+diff reading, t(treated1) p(time) cov(gender white black asian expect learn ///
+screen timewchildren ses) ps(psm) robust report //
+
+diff math, t(treated1) p(time) cov(gender white black asian expect learn ///
+screen timewchildren ses) ps(psm) robust report //
 
 *DID with PSM*
 set more off
