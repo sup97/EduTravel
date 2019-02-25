@@ -1,4 +1,11 @@
+import delimited C:\Users\soyou\Documents\GitHub\EduTravel\id_weight.csv, varnames(1) clear 
+drop v1
+save weights, replace
+
 import delimited C:\Users\soyou\Documents\GitHub\EduTravel\final_data.csv, clear
+
+merge m:m childid using weights 
+save final_data, replace
 
 set more off
 
@@ -6,6 +13,7 @@ drop did
 drop tincth
 drop build-tellst
 drop parentid cregion
+drop if c245pw0=="NA" | c245pw0=="0"
 
 rename r4mscl math
 rename r4rscl reading
@@ -28,7 +36,10 @@ bysort childid (round): replace learn = learn[2]
 bysort childid (round): replace expect = expect[2]
 bysort childid (round): replace screen = screen[2]
 
+bysort childid: egen timewchildren1 = mean(timewchildren)
+bysort childid: replace timewchildren = timewchildren1 if timewchildren==.
 //generate ses variable
+sort childid round
 factor daded dadscr income momed momscr, pcf
 predict ses 
 
@@ -66,55 +77,80 @@ drop if reading ==.
 diff reading, t(treated) p(time)
 diff math, t(treated) p(time)
 
-*DID with cov*
-diff reading, t(treated1) p(time) cov(gender white black asian expect learn ///
-screen timewchildren ses) robust kernel id(childid) report
-
-set more off
-diff reading, t(tmuseum) p(time) cov(gender white black asian expect learn ///
-screen timewchildren ses) kernel id(childid) robust test report
-
-diff reading, t(tconcrt) p(time) cov(gender white black asian expect learn ///
-screen timewchildren ses) robust report
-
-diff reading, t(tzoo) p(time) cov(gender white black asian expect learn ///
-screen timewchildren ses) robust report
-
-diff reading, t(tsport) p(time) cov(gender white black asian expect learn ///
-screen timewchildren ses) robust report
-
-diff math, t(treated1) p(time) cov(gender white black asian expect learn ///
-screen timewchildren ses) robust report
-
-*DID with PSM*
+*DID with cov and psm*
 set more off
 
+qui pscore treated1 gender white black asian expect learn ///
+screen timewchildren ses, pscore(psm) blockid(psm_block) detail
+psgraph, treated(treated1) pscore(psm)
+qui psmatch2 treated1, outcome(reading) pscore(psm)
+qui psmatch2 treated1, outcome(math) pscore(psm)
+
+qui pstest gender white black asian expect learn ///
+screen timewchildren ses, treated(treated1) both graph
+
 diff reading, t(treated1) p(time) cov(gender white black asian expect learn ///
-screen timewchildren ses) kernel id(childid) report
-
-diff reading, t(tmuseum) p(time) cov(gender white black asian expect learn ///
-screen timewchildren ses) kernel id(childid) report
-
-diff reading, t(tconcrt) p(time) cov(gender white black asian expect learn ///
-screen timewchildren ses) kernel id(childid) report
-
-diff reading, t(tzoo) p(time) cov(gender white black asian expect learn ///
-screen timewchildren ses) kernel id(childid) report
-
-diff reading, t(tsport) p(time) cov(gender white black asian expect learn ///
-screen timewchildren ses) kernel id(childid) report
+screen timewchildren ses) ps(psm) robust report 
 
 diff math, t(treated1) p(time) cov(gender white black asian expect learn ///
-screen timewchildren ses) kernel id(childid) report
+screen timewchildren ses) ps(psm) robust report
+drop psm psm_block
 
+qui pscore tmuseum gender white black asian expect learn ///
+screen timewchildren ses, pscore(psm) blockid(psm_block) detail
+psgraph, treated(tmuseum) pscore(psm)
+qui psmatch2 tmuseum, outcome(reading) pscore(psm)
+qui psmatch2 tmuseum, outcome(math) pscore(psm)
+qui pstest gender white black asian expect learn ///
+screen timewchildren ses, treated(tmuseum) both graph
+
+diff reading, t(tmuseum) p(time) cov(gender white black asian expect learn ///
+screen timewchildren ses) ps(psm) robust report
 diff math, t(tmuseum) p(time) cov(gender white black asian expect learn ///
-screen timewchildren ses) kernel id(childid) report
+screen timewchildren ses) ps(psm) robust report
+drop psm psm_block
+
+qui pscore tconcrt gender white black asian expect learn ///
+screen timewchildren ses, pscore(psm) blockid(psm_block) 
+bysort childid (round): replace psm = psm[3]
+psgraph, treated(tconcrt) pscore(psm)
+psmatch2 tconcrt, outcome(reading) pscore(psm)
+psmatch2 tconcrt, outcome(math) pscore(psm)
+qui pstest gender white black asian expect learn ///
+screen timewchildren ses, treated(tconcrt) both graph
+
+diff reading, t(tconcrt) p(time) cov(gender white black asian expect learn ///
+screen timewchildren ses) ps(psm) robust report
 
 diff math, t(tconcrt) p(time) cov(gender white black asian expect learn ///
-screen timewchildren ses) kernel id(childid) report
+screen timewchildren ses) ps(psm) robust report
+drop psm psm_block
+
+qui pscore tzoo gender white black asian expect learn ///
+screen timewchildren ses, pscore(psm) blockid(psm_block) detail
+psgraph, treated(tzoo) pscore(psm)
+psmatch2 tzoo, outcome(reading) pscore(psm)
+psmatch2 tzoo, outcome(match) pscore(psm)
+qui pstest gender white black asian expect learn ///
+screen timewchildren ses, treated(tzoo) both graph
+
+diff reading, t(tzoo) p(time) cov(gender white black asian expect learn ///
+screen timewchildren ses) ps(psm) robust report
 
 diff math, t(tzoo) p(time) cov(gender white black asian expect learn ///
-screen timewchildren ses) kernel id(childid) report
+screen timewchildren ses) ps(psm) robust report
+drop psm psm_block
+
+qui pscore tsport gender white black asian expect learn ///
+screen timewchildren ses, pscore(psm) blockid(psm_block) detail
+psgraph, treated(tsport) pscore(psm)
+psmatch2 tsport, outcome(reading) pscore(psm)
+psmatch2 tsport, outcome(math) pscore(psm)
+qui pstest gender white black asian expect learn ///
+screen timewchildren ses, treated(tsport) both graph
+
+diff reading, t(tsport) p(time) cov(gender white black asian expect learn ///
+screen timewchildren ses) ps(psm) robust report
 
 diff math, t(tsport) p(time) cov(gender white black asian expect learn ///
-screen timewchildren ses) kernel id(childid) report
+screen timewchildren ses) ps(psm) robust report
