@@ -93,7 +93,7 @@ gen tsport2 = 0
 bysort childid (round): replace tmuseum2 = 1 if museum[3] > 0 & museum[5] > 0 
 bysort childid (round): replace tconcrt2 = 1 if concrt[3] > 0 & concrt[5] > 0
 bysort childid (round): replace tzoo2 = 1 if zoo[3] > 0 & zoo[5] > 0
-bysort childid (round): replace tsport2 = 1 if sport[3] > 0 & sprot[5] > 0
+bysort childid (round): replace tsport2 = 1 if sport[3] > 0 & sport[5] > 0
 
 br round museum tmuseum2 tmuseum1
 egen n = group(childid)
