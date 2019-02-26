@@ -1,12 +1,12 @@
 import delimited C:\Users\soyou\Documents\GitHub\EduTravel\id_weight.csv, varnames(1) clear 
 drop v1
-save weights, replace
+save C:\Users\soyou\Documents\GitHub\EduTravel\weights, replace
 
 import delimited C:\Users\soyou\Documents\GitHub\EduTravel\final_data_0226.csv, ///
  numericcols(8/44) clear
 
-merge m:m childid using weights 
-save final_data_0226, replace
+merge m:m childid using C:\Users\soyou\Documents\GitHub\EduTravel\weights 
+save C:\Users\soyou\Documents\GitHub\EduTravel\final_data_0226, replace
 drop _merge
 
 set more off
@@ -51,7 +51,8 @@ bysort childid (round): replace treated1 = 1 if trip[3] > 0
 bysort childid (round): replace treated2 = 1 if trip[5] > 0 
 bysort childid (round): replace treated3 = 1 if trip[3] > 0 & trip[5] > 0 
 
-//generate treated variable - museum
+//generate treated variable - specific activities
+//wave 2
 gen tmuseum = 0
 gen tconcrt = 0
 gen tzoo = 0
@@ -67,6 +68,34 @@ bysort childid (round): replace tconcrt = tconcrt[3]
 bysort childid (round): replace tzoo = tzoo[3] 
 bysort childid (round): replace tsport = tsport[3] 
 
+//wave5
+gen tmuseum1 = 0
+gen tconcrt1 = 0
+gen tzoo1 = 0
+gen tsport1 = 0
+
+bysort childid (round): replace tmuseum1 = 1 if museum > 0 & round == 5
+bysort childid (round): replace tconcrt1 = 1 if concrt > 0 & round == 5
+bysort childid (round): replace tzoo1 = 1 if zoo > 0 & round == 5
+bysort childid (round): replace tsport1 = 1 if sport > 0 & round == 5
+
+bysort childid (round): replace tmuseum1 = tmuseum1[5] 
+bysort childid (round): replace tconcrt1 = tconcrt1[5] 
+bysort childid (round): replace tzoo1 = tzoo1[5] 
+bysort childid (round): replace tsport1 = tsport1[5] 
+
+//wave 2 and 5
+gen tmuseum2 = 0
+gen tconcrt2 = 0
+gen tzoo2 = 0
+gen tsport2 = 0
+
+bysort childid (round): replace tmuseum2 = 1 if museum[3] > 0 & museum[5] > 0 
+bysort childid (round): replace tconcrt2 = 1 if concrt[3] > 0 & concrt[5] > 0
+bysort childid (round): replace tzoo2 = 1 if zoo[3] > 0 & zoo[5] > 0
+bysort childid (round): replace tsport2 = 1 if sport[3] > 0 & sport[5] > 0
+
+br round museum tmuseum2 tmuseum1
 egen n = group(childid)
 sum n
 
@@ -155,6 +184,165 @@ graph export "C:\Users\soyou\Documents\GitHub\EduTravel\matched_museum.pdf", as(
 diff reading, t(tmuseum) p(time) cov(gender white black asian hispanic expect learn ///
 english timewchildren ses) ps(psm) robust report
 diff math, t(tmuseum) p(time) cov(gender white black asian hispanic expect learn ///
+english timewchildren ses) ps(psm) robust report
+drop psm psm_block
+
+//Concert//
+qui pscore tconcrt gender white black asian hispanic expect learn ///
+english timewchildren ses [pw=c245pw0], pscore(psm) blockid(psm_block) 
+//bysort childid (round): replace psm = psm[3]
+//psgraph, treated(tconcrt) pscore(psm)
+//graph export "C:\Users\soyou\Documents\GitHub\EduTravel\ps_score_concert.pdf", as(pdf) replace
+
+psmatch2 tconcrt, outcome(reading) pscore(psm)
+psmatch2 tconcrt, outcome(math) pscore(psm)
+qui pstest gender white black asian hispanic expect learn ///
+english timewchildren ses, treated(tconcrt) both graph
+graph export "C:\Users\soyou\Documents\GitHub\EduTravel\matched_concert.pdf", as(pdf) replace
+
+diff reading, t(tconcrt) p(time) cov(gender white black asian hispanic expect learn ///
+english timewchildren ses) ps(psm) robust report
+
+diff math, t(tconcrt) p(time) cov(gender white black asian hispanic expect learn ///
+english timewchildren ses) ps(psm) robust report
+drop psm psm_block
+
+//Zoo//
+qui pscore tzoo gender white black asian hispanic expect learn ///
+english timewchildren ses [pw=c245pw0], pscore(psm) blockid(psm_block) detail
+//psgraph, treated(tzoo) pscore(psm)
+//graph export "C:\Users\soyou\Documents\GitHub\EduTravel\ps_score_zoo.pdf", as(pdf) replace
+
+psmatch2 tzoo, outcome(reading) pscore(psm)
+psmatch2 tzoo, outcome(math) pscore(psm)
+qui pstest gender white black asian hispanic expect learn ///
+english timewchildren ses, treated(tzoo) both graph
+graph export "C:\Users\soyou\Documents\GitHub\EduTravel\matched_zoo.pdf", as(pdf) replace
+
+diff reading, t(tzoo) p(time) cov(gender white black asian hispanic expect learn ///
+english timewchildren ses) ps(psm) robust report
+
+diff math, t(tzoo) p(time) cov(gender white black asian hispanic expect learn ///
+english timewchildren ses) ps(psm) robust report
+drop psm psm_block
+
+//Sport//
+qui pscore tsport gender white black asian hispanic expect learn ///
+english timewchildren ses [pw=c245pw0], pscore(psm) blockid(psm_block) detail
+//psgraph, treated(tsport) pscore(psm)
+//graph export "C:\Users\soyou\Documents\GitHub\EduTravel\ps_score_sport.pdf", as(pdf) replace
+
+psmatch2 tsport, outcome(reading) pscore(psm)
+psmatch2 tsport, outcome(math) pscore(psm)
+qui pstest gender white black asian hispanic expect learn ///
+english timewchildren ses, treated(tsport) both graph
+graph export "C:\Users\soyou\Documents\GitHub\EduTravel\matched_sport.pdf", as(pdf) replace
+
+diff reading, t(tsport) p(time) cov(gender white black asian hispanic expect learn ///
+english timewchildren ses) ps(psm) robust report
+
+diff math, t(tsport) p(time) cov(gender white black asian hispanic expect learn ///
+english timewchildren ses) ps(psm) robust report
+
+///Wave5
+//Museum//
+drop psm psm_block
+set more off
+qui pscore tmuseum1 gender white black asian hispanic expect learn ///
+english timewchildren ses [pw=c245pw0], pscore(psm) blockid(psm_block) logit detail
+//bysort childid (round): replace psm = psm[3]
+//psgraph, treated(tmuseum1) pscore(psm)
+//graph export "C:\Users\soyou\Documents\GitHub\EduTravel\ps_score_museum.pdf", as(pdf) replace
+
+qui psmatch2 tmuseum1, outcome(reading) pscore(psm)
+qui psmatch2 tmuseum1, outcome(math) pscore(psm)
+qui pstest gender white black asian hispanic expect learn ///
+english timewchildren ses, treated(tmuseum1) both graph
+graph export "C:\Users\soyou\Documents\GitHub\EduTravel\matched_museum.pdf", as(pdf) replace
+
+diff reading, t(tmuseum1) p(time) cov(gender white black asian hispanic expect learn ///
+english timewchildren ses) ps(psm) robust report
+diff math, t(tmuseum1) p(time) cov(gender white black asian hispanic expect learn ///
+english timewchildren ses) ps(psm) robust report
+drop psm psm_block
+
+//Concert//
+qui pscore tconcrt gender white black asian hispanic expect learn ///
+english timewchildren ses [pw=c245pw0], pscore(psm) blockid(psm_block) 
+//bysort childid (round): replace psm = psm[3]
+//psgraph, treated(tconcrt) pscore(psm)
+//graph export "C:\Users\soyou\Documents\GitHub\EduTravel\ps_score_concert.pdf", as(pdf) replace
+
+psmatch2 tconcrt, outcome(reading) pscore(psm)
+psmatch2 tconcrt, outcome(math) pscore(psm)
+qui pstest gender white black asian hispanic expect learn ///
+english timewchildren ses, treated(tconcrt) both graph
+graph export "C:\Users\soyou\Documents\GitHub\EduTravel\matched_concert.pdf", as(pdf) replace
+
+diff reading, t(tconcrt) p(time) cov(gender white black asian hispanic expect learn ///
+english timewchildren ses) ps(psm) robust report
+
+diff math, t(tconcrt) p(time) cov(gender white black asian hispanic expect learn ///
+english timewchildren ses) ps(psm) robust report
+drop psm psm_block
+
+//Zoo//
+qui pscore tzoo gender white black asian hispanic expect learn ///
+english timewchildren ses [pw=c245pw0], pscore(psm) blockid(psm_block) detail
+//psgraph, treated(tzoo) pscore(psm)
+//graph export "C:\Users\soyou\Documents\GitHub\EduTravel\ps_score_zoo.pdf", as(pdf) replace
+
+psmatch2 tzoo, outcome(reading) pscore(psm)
+psmatch2 tzoo, outcome(math) pscore(psm)
+qui pstest gender white black asian hispanic expect learn ///
+english timewchildren ses, treated(tzoo) both graph
+graph export "C:\Users\soyou\Documents\GitHub\EduTravel\matched_zoo.pdf", as(pdf) replace
+
+diff reading, t(tzoo) p(time) cov(gender white black asian hispanic expect learn ///
+english timewchildren ses) ps(psm) robust report
+
+diff math, t(tzoo) p(time) cov(gender white black asian hispanic expect learn ///
+english timewchildren ses) ps(psm) robust report
+drop psm psm_block
+
+//Sport//
+qui pscore tsport gender white black asian hispanic expect learn ///
+english timewchildren ses [pw=c245pw0], pscore(psm) blockid(psm_block) detail
+//psgraph, treated(tsport) pscore(psm)
+//graph export "C:\Users\soyou\Documents\GitHub\EduTravel\ps_score_sport.pdf", as(pdf) replace
+
+psmatch2 tsport, outcome(reading) pscore(psm)
+psmatch2 tsport, outcome(math) pscore(psm)
+qui pstest gender white black asian hispanic expect learn ///
+english timewchildren ses, treated(tsport) both graph
+graph export "C:\Users\soyou\Documents\GitHub\EduTravel\matched_sport.pdf", as(pdf) replace
+
+diff reading, t(tsport) p(time) cov(gender white black asian hispanic expect learn ///
+english timewchildren ses) ps(psm) robust report
+
+diff math, t(tsport) p(time) cov(gender white black asian hispanic expect learn ///
+english timewchildren ses) ps(psm) robust report
+
+///wave 2 &5
+
+//Museum//
+drop psm psm_block
+set more off
+qui pscore tmuseum2 gender white black asian hispanic expect learn ///
+english timewchildren ses [pw=c245pw0], pscore(psm) blockid(psm_block) logit detail
+//bysort childid (round): replace psm = psm[3]
+//psgraph, treated(tmuseum2) pscore(psm)
+//graph export "C:\Users\soyou\Documents\GitHub\EduTravel\ps_score_museum.pdf", as(pdf) replace
+
+qui psmatch2 tmuseum2, outcome(reading) pscore(psm)
+qui psmatch2 tmuseum2, outcome(math) pscore(psm)
+qui pstest gender white black asian hispanic expect learn ///
+english timewchildren ses, treated(tmuseum2) both graph
+graph export "C:\Users\soyou\Documents\GitHub\EduTravel\matched_museum.pdf", as(pdf) replace
+
+diff reading, t(tmuseum2) p(time) cov(gender white black asian hispanic expect learn ///
+english timewchildren ses) ps(psm) robust report
+diff math, t(tmuseum2) p(time) cov(gender white black asian hispanic expect learn ///
 english timewchildren ses) ps(psm) robust report
 drop psm psm_block
 
