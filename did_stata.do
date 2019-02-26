@@ -244,6 +244,7 @@ english timewchildren ses) ps(psm) robust report
 diff math, t(tsport) p(time) cov(gender white black asian hispanic expect learn ///
 english timewchildren ses) ps(psm) robust report
 
+
 ///Wave5
 //Museum//
 drop psm psm_block
@@ -267,60 +268,60 @@ english timewchildren ses) ps(psm) robust report
 drop psm psm_block
 
 //Concert//
-qui pscore tconcrt gender white black asian hispanic expect learn ///
+qui pscore tconcrt1 gender white black asian hispanic expect learn ///
 english timewchildren ses [pw=c245pw0], pscore(psm) blockid(psm_block) 
 //bysort childid (round): replace psm = psm[3]
-//psgraph, treated(tconcrt) pscore(psm)
+//psgraph, treated(tconcrt1) pscore(psm)
 //graph export "C:\Users\soyou\Documents\GitHub\EduTravel\ps_score_concert.pdf", as(pdf) replace
 
-psmatch2 tconcrt, outcome(reading) pscore(psm)
-psmatch2 tconcrt, outcome(math) pscore(psm)
+psmatch2 tconcrt1, outcome(reading) pscore(psm)
+psmatch2 tconcrt1, outcome(math) pscore(psm)
 qui pstest gender white black asian hispanic expect learn ///
-english timewchildren ses, treated(tconcrt) both graph
+english timewchildren ses, treated(tconcrt1) both graph
 graph export "C:\Users\soyou\Documents\GitHub\EduTravel\matched_concert.pdf", as(pdf) replace
 
-diff reading, t(tconcrt) p(time) cov(gender white black asian hispanic expect learn ///
+diff reading, t(tconcrt1) p(time) cov(gender white black asian hispanic expect learn ///
 english timewchildren ses) ps(psm) robust report
 
-diff math, t(tconcrt) p(time) cov(gender white black asian hispanic expect learn ///
+diff math, t(tconcrt1) p(time) cov(gender white black asian hispanic expect learn ///
 english timewchildren ses) ps(psm) robust report
 drop psm psm_block
 
 //Zoo//
-qui pscore tzoo gender white black asian hispanic expect learn ///
+qui pscore tzoo1 gender white black asian hispanic expect learn ///
 english timewchildren ses [pw=c245pw0], pscore(psm) blockid(psm_block) detail
-//psgraph, treated(tzoo) pscore(psm)
+//psgraph, treated(tzoo1) pscore(psm)
 //graph export "C:\Users\soyou\Documents\GitHub\EduTravel\ps_score_zoo.pdf", as(pdf) replace
 
-psmatch2 tzoo, outcome(reading) pscore(psm)
-psmatch2 tzoo, outcome(math) pscore(psm)
+psmatch2 tzoo1, outcome(reading) pscore(psm)
+psmatch2 tzoo1, outcome(math) pscore(psm)
 qui pstest gender white black asian hispanic expect learn ///
-english timewchildren ses, treated(tzoo) both graph
+english timewchildren ses, treated(tzoo1) both graph
 graph export "C:\Users\soyou\Documents\GitHub\EduTravel\matched_zoo.pdf", as(pdf) replace
 
-diff reading, t(tzoo) p(time) cov(gender white black asian hispanic expect learn ///
+diff reading, t(tzoo1) p(time) cov(gender white black asian hispanic expect learn ///
 english timewchildren ses) ps(psm) robust report
 
-diff math, t(tzoo) p(time) cov(gender white black asian hispanic expect learn ///
+diff math, t(tzoo1) p(time) cov(gender white black asian hispanic expect learn ///
 english timewchildren ses) ps(psm) robust report
 drop psm psm_block
 
 //Sport//
-qui pscore tsport gender white black asian hispanic expect learn ///
+qui pscore tsport1 gender white black asian hispanic expect learn ///
 english timewchildren ses [pw=c245pw0], pscore(psm) blockid(psm_block) detail
-//psgraph, treated(tsport) pscore(psm)
+//psgraph, treated(tsport1) pscore(psm)
 //graph export "C:\Users\soyou\Documents\GitHub\EduTravel\ps_score_sport.pdf", as(pdf) replace
 
-psmatch2 tsport, outcome(reading) pscore(psm)
-psmatch2 tsport, outcome(math) pscore(psm)
+psmatch2 tsport1, outcome(reading) pscore(psm)
+psmatch2 tsport1, outcome(math) pscore(psm)
 qui pstest gender white black asian hispanic expect learn ///
-english timewchildren ses, treated(tsport) both graph
+english timewchildren ses, treated(tsport1) both graph
 graph export "C:\Users\soyou\Documents\GitHub\EduTravel\matched_sport.pdf", as(pdf) replace
 
-diff reading, t(tsport) p(time) cov(gender white black asian hispanic expect learn ///
+diff reading, t(tsport1) p(time) cov(gender white black asian hispanic expect learn ///
 english timewchildren ses) ps(psm) robust report
 
-diff math, t(tsport) p(time) cov(gender white black asian hispanic expect learn ///
+diff math, t(tsport1) p(time) cov(gender white black asian hispanic expect learn ///
 english timewchildren ses) ps(psm) robust report
 
 ///wave 2 &5
@@ -347,58 +348,58 @@ english timewchildren ses) ps(psm) robust report
 drop psm psm_block
 
 //Concert//
-qui pscore tconcrt gender white black asian hispanic expect learn ///
+qui pscore tconcrt2 gender white black asian hispanic expect learn ///
 english timewchildren ses [pw=c245pw0], pscore(psm) blockid(psm_block) 
 //bysort childid (round): replace psm = psm[3]
-//psgraph, treated(tconcrt) pscore(psm)
+//psgraph, treated(tconcrt2) pscore(psm)
 //graph export "C:\Users\soyou\Documents\GitHub\EduTravel\ps_score_concert.pdf", as(pdf) replace
 
-psmatch2 tconcrt, outcome(reading) pscore(psm)
-psmatch2 tconcrt, outcome(math) pscore(psm)
+psmatch2 tconcrt2, outcome(reading) pscore(psm)
+psmatch2 tconcrt2, outcome(math) pscore(psm)
 qui pstest gender white black asian hispanic expect learn ///
-english timewchildren ses, treated(tconcrt) both graph
+english timewchildren ses, treated(tconcrt2) both graph
 graph export "C:\Users\soyou\Documents\GitHub\EduTravel\matched_concert.pdf", as(pdf) replace
 
-diff reading, t(tconcrt) p(time) cov(gender white black asian hispanic expect learn ///
+diff reading, t(tconcrt2) p(time) cov(gender white black asian hispanic expect learn ///
 english timewchildren ses) ps(psm) robust report
 
-diff math, t(tconcrt) p(time) cov(gender white black asian hispanic expect learn ///
+diff math, t(tconcrt2) p(time) cov(gender white black asian hispanic expect learn ///
 english timewchildren ses) ps(psm) robust report
 drop psm psm_block
 
 //Zoo//
-qui pscore tzoo gender white black asian hispanic expect learn ///
+qui pscore tzoo2 gender white black asian hispanic expect learn ///
 english timewchildren ses [pw=c245pw0], pscore(psm) blockid(psm_block) detail
-//psgraph, treated(tzoo) pscore(psm)
+//psgraph, treated(tzoo2) pscore(psm)
 //graph export "C:\Users\soyou\Documents\GitHub\EduTravel\ps_score_zoo.pdf", as(pdf) replace
 
-psmatch2 tzoo, outcome(reading) pscore(psm)
-psmatch2 tzoo, outcome(math) pscore(psm)
+psmatch2 tzoo2, outcome(reading) pscore(psm)
+psmatch2 tzoo2, outcome(math) pscore(psm)
 qui pstest gender white black asian hispanic expect learn ///
-english timewchildren ses, treated(tzoo) both graph
+english timewchildren ses, treated(tzoo2) both graph
 graph export "C:\Users\soyou\Documents\GitHub\EduTravel\matched_zoo.pdf", as(pdf) replace
 
-diff reading, t(tzoo) p(time) cov(gender white black asian hispanic expect learn ///
+diff reading, t(tzoo2) p(time) cov(gender white black asian hispanic expect learn ///
 english timewchildren ses) ps(psm) robust report
 
-diff math, t(tzoo) p(time) cov(gender white black asian hispanic expect learn ///
+diff math, t(tzoo2) p(time) cov(gender white black asian hispanic expect learn ///
 english timewchildren ses) ps(psm) robust report
 drop psm psm_block
 
 //Sport//
-qui pscore tsport gender white black asian hispanic expect learn ///
+qui pscore tsport2 gender white black asian hispanic expect learn ///
 english timewchildren ses [pw=c245pw0], pscore(psm) blockid(psm_block) detail
-//psgraph, treated(tsport) pscore(psm)
+//psgraph, treated(tsport2) pscore(psm)
 //graph export "C:\Users\soyou\Documents\GitHub\EduTravel\ps_score_sport.pdf", as(pdf) replace
 
-psmatch2 tsport, outcome(reading) pscore(psm)
-psmatch2 tsport, outcome(math) pscore(psm)
+psmatch2 tsport2, outcome(reading) pscore(psm)
+psmatch2 tsport2, outcome(math) pscore(psm)
 qui pstest gender white black asian hispanic expect learn ///
-english timewchildren ses, treated(tsport) both graph
+english timewchildren ses, treated(tsport2) both graph
 graph export "C:\Users\soyou\Documents\GitHub\EduTravel\matched_sport.pdf", as(pdf) replace
 
-diff reading, t(tsport) p(time) cov(gender white black asian hispanic expect learn ///
+diff reading, t(tsport2) p(time) cov(gender white black asian hispanic expect learn ///
 english timewchildren ses) ps(psm) robust report
 
-diff math, t(tsport) p(time) cov(gender white black asian hispanic expect learn ///
+diff math, t(tsport2) p(time) cov(gender white black asian hispanic expect learn ///
 english timewchildren ses) ps(psm) robust report
