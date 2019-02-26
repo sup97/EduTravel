@@ -30,9 +30,9 @@ dim(data_cs)
 
 ```{r change values}
 # make negative values into missing
-data_cs <- data_nt_imp %>%
-  mutate_all(funs(replace(., .<0, NA)))
-View(data_cs)
+#data_cs <- data_nt_imp %>%
+#  mutate_all(funs(replace(., .<0, NA)))
+#View(data_cs)
 data_cs[8:65] <- lapply(data_cs[8:65], as.numeric)
 #change Female = 0
 data_cs$GENDER[data_cs$GENDER==2] <- 0
@@ -68,7 +68,6 @@ data_cs$P1EXPECT[data_cs$P1EXPECT==4] = 16
 data_cs$P1EXPECT[data_cs$P1EXPECT==2] = 14
 data_cs$P1EXPECT[data_cs$P1EXPECT==2] = 12
 data_cs$P1EXPECT[data_cs$P1EXPECT==1] = 8
-data_cs$P1EXPECT <- as.numeric(data_cs$P1EXPECT)[data_cs$P1EXPECT]
 summary(data_cs$P1EXPECT)
 
 data_cs$P5EXPECT[data_cs$P5EXPECT==6] = 22
@@ -77,7 +76,6 @@ data_cs$P5EXPECT[data_cs$P5EXPECT==4] = 16
 data_cs$P5EXPECT[data_cs$P5EXPECT==2] = 14
 data_cs$P5EXPECT[data_cs$P5EXPECT==2] = 12
 data_cs$P5EXPECT[data_cs$P5EXPECT==1] = 8
-data_cs$P5EXPECT <- as.numeric(data_cs$P5EXPECT)[data_cs$P5EXPECT]
 summary(data_cs$P5EXPECT)
 
 #change travel variables to dummy variables
@@ -102,7 +100,6 @@ data_cs$WKMOMED[data_cs$WKMOMED==4] = 14
 data_cs$WKMOMED[data_cs$WKMOMED==2] = 12
 data_cs$WKMOMED[data_cs$WKMOMED==2] = 12
 data_cs$WKMOMED[data_cs$WKMOMED==1] = 8
-data_cs$WKMOMED <- as.numeric(data_cs$WKMOMED)[data_cs$WKMOMED]
 summary(data_cs$WKMOMED)
 
 data_cs$WKDADED[data_cs$WKDADED==9] = 22
@@ -114,7 +111,6 @@ data_cs$WKDADED[data_cs$WKDADED==4] = 14
 data_cs$WKDADED[data_cs$WKDADED==3] = 12
 data_cs$WKDADED[data_cs$WKDADED==2] = 12
 data_cs$WKDADED[data_cs$WKDADED==1] = 8
-data_cs$WKDADED <- as.numeric(data_cs$WKDADED)[data_cs$WKDADED]
 summary(data_cs$WKDADED)
 
 data_cs$W1MOMED[data_cs$W1MOMED==9] = 22
@@ -126,7 +122,6 @@ data_cs$W1MOMED[data_cs$W1MOMED==4] = 14
 data_cs$W1MOMED[data_cs$W1MOMED==3] = 12
 data_cs$W1MOMED[data_cs$W1MOMED==2] = 12
 data_cs$W1MOMED[data_cs$W1MOMED==1] = 8
-data_cs$W1MOMED <- as.numeric(data_cs$W1MOMED)[data_cs$W1MOMED]
 summary(data_cs$W1MOMED)
 
 data_cs$W1DADED[data_cs$W1DADED==9] = 22
@@ -138,7 +133,6 @@ data_cs$W1DADED[data_cs$W1DADED==4] = 14
 data_cs$W1DADED[data_cs$W1DADED==3] = 12
 data_cs$W1DADED[data_cs$W1DADED==2] = 12
 data_cs$W1DADED[data_cs$W1DADED==1] = 8
-data_cs$W1DADED <- as.numeric(data_cs$W1DADED)[data_cs$W1DADED]
 summary(data_cs$W1DADED)
 
 data_cs$W5MOMED[data_cs$W5MOMED==9] = 22
@@ -150,7 +144,6 @@ data_cs$W5MOMED[data_cs$W5MOMED==4] = 14
 data_cs$W5MOMED[data_cs$W5MOMED==3] = 12
 data_cs$W5MOMED[data_cs$W5MOMED==2] = 12
 data_cs$W5MOMED[data_cs$W5MOMED==1] = 8
-data_cs$W5MOMED <- as.numeric(data_cs$W5MOMED)[data_cs$W5MOMED]
 summary(data_cs$W5MOMED)
 
 data_cs$W5DADED[data_cs$W5DADED==9] = 22
@@ -162,7 +155,7 @@ data_cs$W5DADED[data_cs$W5DADED==4] = 14
 data_cs$W5DADED[data_cs$W5DADED==3] = 12
 data_cs$W5DADED[data_cs$W5DADED==2] = 12
 data_cs$W5DADED[data_cs$W5DADED==1] = 8
-data_cs$W5DADED <- as.numeric(data_cs$W5DADED)[data_cs$W5DADED]
+#data_cs$W5DADED <- as.numeric(data_cs$W5DADED)[data_cs$W5DADED]
 summary(data_cs$W5DADED)
 ```
 
@@ -192,16 +185,11 @@ colnames(data_cs)
 #change to panel format
 data_cs$X1 <- NULL
 
-data_rs <- reshape(data = data_cs, 
-                   idvar = c("CHILDID", "PARENTID", "S1_ID", "CREGION", "DOBYY", "GENDER", "RACE"), 
-                   varying = c("PARENTID", "S1_ID", "CREGION", "DOBYY", "GENDER", "RACE" , "white", "black", "asian", "hispanic", "C1R4RSCL", 	 "C1R4MSCL", "C2R4RSCL", 	"C2R4MSCL", "C4R4RSCL", 	"C4R4MSCL", 	"C5R4RSCL", 	"C5R4MSCL", 	"T1LEARN", 	"T2LEARN","T4LEARN", 	"T5LEARN", 	"W0MOMED", "W0DADED", 	"W0MOMSCR", 	"W0DADSCR", 	"W0INCOME", 	"W1MOMED", 	"W1DADED", 	"W1MOMSCR", 	"W1DADSCR", 	"W1INCOME", "W5MOMED", 	"W5DADED", 	"W5MOMSCR", 	"W5DADSCR", 	"C1SCREEN", 	"C2SCREEN", 	"C5SCREEN", 	"P1EXPECT", 	"P1READBO", "P1TELLST", 	"P1SINGSO", 	"P1HELPAR", 	"P1GAMES", 	"P1NATURE", 	"P1BUILD", 	"P1SPRTS", 	"P2CONCRT", 	"P2MUSEUM", "P2ZOO", 	"P2SPORT", 	"P2INCOME", 	"P5EXPECT", 	"P5TELLST", 	"P5SINGSO", 	"P5HELPAR", 	"P5GAMES", 	"P5NATURE", "P5BUILD", 	"P5SPRTS", 	"P5READBO", 	"P5CONCRT", 	"P5MUSEUM", 	"P5ZOO", 	"P5SPORT", 	"P5TINCTH"), 
-                   v.names = "value",
-                   timevar = "period", 
-                   times = c("PARENTID", "S1_ID", "CREGION", "DOBYY", "GENDER", "RACE" , "white", "black", "asian", "hispanic","C1R4RSCL", 	 "C1R4MSCL", "C2R4RSCL", 	"C2R4MSCL", "C4R4RSCL", 	"C4R4MSCL", 	"C5R4RSCL", 	"C5R4MSCL", 	"T1LEARN", 	"T2LEARN","T4LEARN",	"T5LEARN", 	"W0MOMED", "W0DADED", 	"W0MOMSCR", 	"W0DADSCR", 	"W0INCOME", 	"W1MOMED", 	"W1DADED", 	"W1MOMSCR", 	"W1DADSCR", 	"W1INCOME", "W5MOMED", 	"W5DADED", 	"W5MOMSCR", 	"W5DADSCR", 	"C1SCREEN", 	"C2SCREEN", 	"C5SCREEN", 	"P1EXPECT", 	"P1READBO", "P1TELLST", 	"P1SINGSO", 	"P1HELPAR", 	"P1GAMES", 	"P1NATURE", 	"P1BUILD", 	"P1SPRTS", 	"P2CONCRT", 	"P2MUSEUM", "P2ZOO", 	"P2SPORT", 	"P2INCOME", 	"P5EXPECT", 	"P5TELLST", 	"P5SINGSO", 	"P5HELPAR", 	"P5GAMES", 	"P5NATURE", "P5BUILD", 	"P5SPRTS", 	"P5READBO", 	"P5CONCRT", 	"P5MUSEUM", 	"P5ZOO", 	"P5SPORT", 	"P5TINCTH"), 
-                   direction = "long")
+#"PARENTID", "S1_ID", "CREGION", "DOBYY", "GENDER", "RACE" , "white", "black", "asian", "hispanic", "C1R4RSCL", 	 "C1R4MSCL", "C2R4RSCL", 	"C2R4MSCL", "C4R4RSCL", 	"C4R4MSCL", 	"C5R4RSCL", 	"C5R4MSCL", 	"T1LEARN", 	"T2LEARN","T4LEARN", 	"T5LEARN", 	"W0MOMED", "W0DADED", 	"W0MOMSCR", 	"W0DADSCR", 	"W0INCOME", 	"W1MOMED", 	"W1DADED", 	"W1MOMSCR", 	"W1DADSCR", 	"W1INCOME", "W5MOMED", 	"W5DADED", 	"W5MOMSCR", 	"W5DADSCR", 	"C1SCREEN", 	"C2SCREEN", 	"C5SCREEN", 	"P1EXPECT", 	"P1READBO", "P1TELLST", 	"P1SINGSO", 	"P1HELPAR", 	"P1GAMES", 	"P1NATURE", 	"P1BUILD", 	"P1SPRTS", 	"P2CONCRT", 	"P2MUSEUM", "P2ZOO", 	"P2SPORT", 	"P2INCOME", 	"P5EXPECT", 	"P5TELLST", 	"P5SINGSO", 	"P5HELPAR", 	"P5GAMES", 	"P5NATURE", "P5BUILD", 	"P5SPRTS", 	"P5READBO", 	"P5CONCRT", 	"P5MUSEUM", 	"P5ZOO", 	"P5SPORT", 	"P5TINCTH"
+data_rs <- melt(data_cs, id.vars = c("CHILDID","PARENTID", "S1_ID", "CREGION", "DOBYY", "GENDER", "RACE" , "white", "black", "asian", "hispanic"))
 
 data_rs <- data_rs %>% 
-  separate(col = period, into= c("round", "variable"), sep = 2, remove = TRUE,
+  separate(col = variable, into= c("round", "variable"), sep = 2, remove = TRUE,
   convert = FALSE, extra = "warn", fill = "warn") %>%
   distinct()
 
@@ -213,12 +201,14 @@ data_rs$round <- gsub("[a-zA-Z ]", "", data_rs$round)
 data_rs[] <- lapply(data_rs, unclass)
 data_wide <- spread(data_rs, variable, value)
 colnames(data_wide)
-data_wide[8:35] <- lapply(data_wide[8:35], as.numeric)
+data_wide[,12] <- as.numeric(data_wide[,12])
 dim(data_wide)
 ```
 
 ```{r}
+rm(data_nt_imp)
 data <- data_wide[!is.na(data_wide$CHILDID),]
+rm(data_wide)
 data <- distinct(data)
 dim(data)
 
@@ -232,7 +222,7 @@ data[8:11] <- as.data.frame(lapply(data[8:11], function(x) ifelse(x < 0, 0, x)))
 summary(data[8:11])
 
 data[12:35] <- as.data.frame(lapply(data[12:35], function(x) ifelse(x < 0, NA, x)))
-#summary(data[12:35])
+summary(data[12:35])
 
 #create trip variable - sum of four trip variables
 data$trip <- rowSums(data[8:11], na.rm = FALSE)
@@ -262,7 +252,7 @@ data$treatedZ = ifelse(data$ZOO[data$round==2] > 0, 1, 0)
 #create did variable - an interaction between time and treated
 data$did = data$time * data$treated
 
-write.csv(data, file="final_data.csv", row.names = FALSE)
+write.csv(data, file="final_data_0226.csv", row.names = FALSE)
 data$didM = data$time * data$treatedM
 data$didS = data$time * data$treatedS
 data$didC = data$time * data$treatedC
