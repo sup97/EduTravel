@@ -13,25 +13,29 @@ library(tidyr)
 rm(list=ls())
 
 #load imputed data
-setwd("C:/Users/soyou/Box Sync/education and travel/R")
-load("C:/Users/soyou/Box Sync/education and travel/R/data_imp.RData")
+setwd("C:/Users/soyou/Box Sync/Research/Educational benefits/education and travel (sup97@psu.edu)/R")
+data_nt_imp<- read_csv("C:/Users/soyou/Box Sync/Research/Educational benefits/education and travel (sup97@psu.edu)/R/mice_imp_5.csv")
 #setwd("~/Box Sync/education and travel/R")
 #load("~/Box Sync/education and travel/R/data_knn.RData")
 #summary(data.knn)
 
 #delete imputation information variables
 #data_cs <- data.knn[1:62]
-data_cs <- data_nt_imp[1:72]
+data_cs <- data_nt_imp
 
-summary(data_cs)
+#summary(data_cs)
 dim(data_cs)
-dim(data_nt_imp)
 ```
 
 
 ```{r change values}
+# make negative values into missing
+data_cs <- data_nt_imp %>%
+  mutate_all(funs(replace(., .<0, NA)))
+View(data_cs)
+data_cs[8:65] <- lapply(data_cs[8:65], as.numeric)
 #change Female = 0
-levels(data_cs$GENDER)[levels(data_cs$GENDER)=="2"] <- "0"
+data_cs$GENDER[data_cs$GENDER==2] <- 0
 summary(data_cs$GENDER)
 
 #create race dummies
@@ -45,120 +49,120 @@ summary(data_cs$asian)
 summary(data_cs$hispanic)
 
 #format non-english speaking (does not speak english at home - 0, enlgish at home - 1)
-levels(data_cs$C1SCREEN)[levels(data_cs$C1SCREEN)=="1"] <- "0"
-levels(data_cs$C1SCREEN)[levels(data_cs$C1SCREEN)=="2"] <- "1"
+
+data_cs$C1SCREEN[data_cs$C1SCREEN==1] <- 0
+data_cs$C1SCREEN[data_cs$C1SCREEN==2] <- 1
 summary(data_cs$C1SCREEN)
-levels(data_cs$C1SCREEN)
 
-levels(data_cs$C2SCREEN)[levels(data_cs$C2SCREEN)=="1"] <- "0"
-levels(data_cs$C2SCREEN)[levels(data_cs$C2SCREEN)=="2"] <- "1"
+data_cs$C2SCREEN[data_cs$C2SCREEN==1] <- 0
+data_cs$C2SCREEN[data_cs$C2SCREEN==2] <- 1
 
-levels(data_cs$C5SCREEN)[levels(data_cs$C5SCREEN)=="1"] <- "0"
-levels(data_cs$C5SCREEN)[levels(data_cs$C5SCREEN)=="2"] <- "1"
+data_cs$C5SCREEN[data_cs$C5SCREEN==1] <- 0
+data_cs$C5SCREEN[data_cs$C5SCREEN==2] <- 1
 
 #expectation level to years of education
 summary(data_cs$P1EXPECT)
-levels(data_cs$P1EXPECT)[levels(data_cs$P1EXPECT)=="6"] = "22"
-levels(data_cs$P1EXPECT)[levels(data_cs$P1EXPECT)=="5"] = "18"
-levels(data_cs$P1EXPECT)[levels(data_cs$P1EXPECT)=="4"] = "16"
-levels(data_cs$P1EXPECT)[levels(data_cs$P1EXPECT)=="3"] = "14"
-levels(data_cs$P1EXPECT)[levels(data_cs$P1EXPECT)=="2"] = "12"
-levels(data_cs$P1EXPECT)[levels(data_cs$P1EXPECT)=="1"] = "8"
-data_cs$P1EXPECT <- as.numeric(levels(data_cs$P1EXPECT))[data_cs$P1EXPECT]
+data_cs$P1EXPECT[data_cs$P1EXPECT==6] = 22
+data_cs$P1EXPECT[data_cs$P1EXPECT==5] = 18
+data_cs$P1EXPECT[data_cs$P1EXPECT==4] = 16
+data_cs$P1EXPECT[data_cs$P1EXPECT==2] = 14
+data_cs$P1EXPECT[data_cs$P1EXPECT==2] = 12
+data_cs$P1EXPECT[data_cs$P1EXPECT==1] = 8
+data_cs$P1EXPECT <- as.numeric(data_cs$P1EXPECT)[data_cs$P1EXPECT]
 summary(data_cs$P1EXPECT)
 
-levels(data_cs$P5EXPECT)[levels(data_cs$P5EXPECT)=="6"] = "22"
-levels(data_cs$P5EXPECT)[levels(data_cs$P5EXPECT)=="5"] = "18"
-levels(data_cs$P5EXPECT)[levels(data_cs$P5EXPECT)=="4"] = "16"
-levels(data_cs$P5EXPECT)[levels(data_cs$P5EXPECT)=="3"] = "14"
-levels(data_cs$P5EXPECT)[levels(data_cs$P5EXPECT)=="2"] = "12"
-levels(data_cs$P5EXPECT)[levels(data_cs$P5EXPECT)=="1"] = "8"
-data_cs$P5EXPECT <- as.numeric(levels(data_cs$P5EXPECT))[data_cs$P5EXPECT]
+data_cs$P5EXPECT[data_cs$P5EXPECT==6] = 22
+data_cs$P5EXPECT[data_cs$P5EXPECT==5] = 18
+data_cs$P5EXPECT[data_cs$P5EXPECT==4] = 16
+data_cs$P5EXPECT[data_cs$P5EXPECT==2] = 14
+data_cs$P5EXPECT[data_cs$P5EXPECT==2] = 12
+data_cs$P5EXPECT[data_cs$P5EXPECT==1] = 8
+data_cs$P5EXPECT <- as.numeric(data_cs$P5EXPECT)[data_cs$P5EXPECT]
 summary(data_cs$P5EXPECT)
 
 #change travel variables to dummy variables
-levels(data_cs$P2CONCRT)[levels(data_cs$P2CONCRT)=="2"] <- "0"
-levels(data_cs$P2MUSEUM)[levels(data_cs$P2MUSEUM)=="2"] <- "0"
-levels(data_cs$P2ZOO)[levels(data_cs$P2ZOO)=="2"] <- "0"
-levels(data_cs$P2SPORT)[levels(data_cs$P2SPORT)=="2"] <- "0"
+data_cs$P2CONCRT[data_cs$P2CONCRT==2] <- 0
+data_cs$P2MUSEUM[data_cs$P2MUSEUM==2] <- 0
+data_cs$P2ZOO[data_cs$P2ZOO==2] <- 0
+data_cs$P2SPORT[data_cs$P2SPORT==2] <- 0
 
-levels(data_cs$P5CONCRT)[levels(data_cs$P5CONCRT)=="2"] <- "0"
-levels(data_cs$P5MUSEUM)[levels(data_cs$P5MUSEUM)=="2"] <- "0"
-levels(data_cs$P5ZOO)[levels(data_cs$P5ZOO)=="2"] <- "0"
-levels(data_cs$P5SPTEVT)[levels(data_cs$P5SPTEVT)=="2"] <- "0"
+data_cs$P5CONCRT[data_cs$P5CONCRT==2] <- 0
+data_cs$P5MUSEUM[data_cs$P5MUSEUM==2] <- 0
+data_cs$P5ZOO[data_cs$P5ZOO==2] <- 0
+data_cs$P5SPTEVT[data_cs$P5SPTEVT==2] <- 0
 
 
 #parent's educational status to years of education
-levels(data_cs$WKMOMED)[levels(data_cs$WKMOMED)=="9"] = "22"
-levels(data_cs$WKMOMED)[levels(data_cs$WKMOMED)=="8"] = "18"
-levels(data_cs$WKMOMED)[levels(data_cs$WKMOMED)=="7"] = "18"
-levels(data_cs$WKMOMED)[levels(data_cs$WKMOMED)=="6"] = "16"
-levels(data_cs$WKMOMED)[levels(data_cs$WKMOMED)=="5"] = "14"
-levels(data_cs$WKMOMED)[levels(data_cs$WKMOMED)=="4"] = "14"
-levels(data_cs$WKMOMED)[levels(data_cs$WKMOMED)=="3"] = "12"
-levels(data_cs$WKMOMED)[levels(data_cs$WKMOMED)=="2"] = "12"
-levels(data_cs$WKMOMED)[levels(data_cs$WKMOMED)=="1"] = "8"
-data_cs$WKMOMED <- as.numeric(levels(data_cs$WKMOMED))[data_cs$WKMOMED]
+data_cs$WKMOMED[data_cs$WKMOMED==9] = 22
+data_cs$WKMOMED[data_cs$WKMOMED==8] = 18
+data_cs$WKMOMED[data_cs$WKMOMED==7] = 18
+data_cs$WKMOMED[data_cs$WKMOMED==6] = 16
+data_cs$WKMOMED[data_cs$WKMOMED==5] = 14
+data_cs$WKMOMED[data_cs$WKMOMED==4] = 14
+data_cs$WKMOMED[data_cs$WKMOMED==2] = 12
+data_cs$WKMOMED[data_cs$WKMOMED==2] = 12
+data_cs$WKMOMED[data_cs$WKMOMED==1] = 8
+data_cs$WKMOMED <- as.numeric(data_cs$WKMOMED)[data_cs$WKMOMED]
 summary(data_cs$WKMOMED)
 
-levels(data_cs$WKDADED)[levels(data_cs$WKDADED)=="9"] = "22"
-levels(data_cs$WKDADED)[levels(data_cs$WKDADED)=="8"] = "18"
-levels(data_cs$WKDADED)[levels(data_cs$WKDADED)=="7"] = "18"
-levels(data_cs$WKDADED)[levels(data_cs$WKDADED)=="6"] = "16"
-levels(data_cs$WKDADED)[levels(data_cs$WKDADED)=="5"] = "14"
-levels(data_cs$WKDADED)[levels(data_cs$WKDADED)=="4"] = "14"
-levels(data_cs$WKDADED)[levels(data_cs$WKDADED)=="3"] = "12"
-levels(data_cs$WKDADED)[levels(data_cs$WKDADED)=="2"] = "12"
-levels(data_cs$WKDADED)[levels(data_cs$WKDADED)=="1"] = "8"
-data_cs$WKDADED <- as.numeric(levels(data_cs$WKDADED))[data_cs$WKDADED]
+data_cs$WKDADED[data_cs$WKDADED==9] = 22
+data_cs$WKDADED[data_cs$WKDADED==8] = 18
+data_cs$WKDADED[data_cs$WKDADED==7] = 18
+data_cs$WKDADED[data_cs$WKDADED==6] = 16
+data_cs$WKDADED[data_cs$WKDADED==5] = 14
+data_cs$WKDADED[data_cs$WKDADED==4] = 14
+data_cs$WKDADED[data_cs$WKDADED==3] = 12
+data_cs$WKDADED[data_cs$WKDADED==2] = 12
+data_cs$WKDADED[data_cs$WKDADED==1] = 8
+data_cs$WKDADED <- as.numeric(data_cs$WKDADED)[data_cs$WKDADED]
 summary(data_cs$WKDADED)
 
-levels(data_cs$W1MOMED)[levels(data_cs$W1MOMED)=="9"] = "22"
-levels(data_cs$W1MOMED)[levels(data_cs$W1MOMED)=="8"] = "18"
-levels(data_cs$W1MOMED)[levels(data_cs$W1MOMED)=="7"] = "18"
-levels(data_cs$W1MOMED)[levels(data_cs$W1MOMED)=="6"] = "16"
-levels(data_cs$W1MOMED)[levels(data_cs$W1MOMED)=="5"] = "14"
-levels(data_cs$W1MOMED)[levels(data_cs$W1MOMED)=="4"] = "14"
-levels(data_cs$W1MOMED)[levels(data_cs$W1MOMED)=="3"] = "12"
-levels(data_cs$W1MOMED)[levels(data_cs$W1MOMED)=="2"] = "12"
-levels(data_cs$W1MOMED)[levels(data_cs$W1MOMED)=="1"] = "8"
-data_cs$W1MOMED <- as.numeric(levels(data_cs$W1MOMED))[data_cs$W1MOMED]
+data_cs$W1MOMED[data_cs$W1MOMED==9] = 22
+data_cs$W1MOMED[data_cs$W1MOMED==8] = 18
+data_cs$W1MOMED[data_cs$W1MOMED==7] = 18
+data_cs$W1MOMED[data_cs$W1MOMED==6] = 16
+data_cs$W1MOMED[data_cs$W1MOMED==5] = 14
+data_cs$W1MOMED[data_cs$W1MOMED==4] = 14
+data_cs$W1MOMED[data_cs$W1MOMED==3] = 12
+data_cs$W1MOMED[data_cs$W1MOMED==2] = 12
+data_cs$W1MOMED[data_cs$W1MOMED==1] = 8
+data_cs$W1MOMED <- as.numeric(data_cs$W1MOMED)[data_cs$W1MOMED]
 summary(data_cs$W1MOMED)
 
-levels(data_cs$W1DADED)[levels(data_cs$W1DADED)=="9"] = "22"
-levels(data_cs$W1DADED)[levels(data_cs$W1DADED)=="8"] = "18"
-levels(data_cs$W1DADED)[levels(data_cs$W1DADED)=="7"] = "18"
-levels(data_cs$W1DADED)[levels(data_cs$W1DADED)=="6"] = "16"
-levels(data_cs$W1DADED)[levels(data_cs$W1DADED)=="5"] = "14"
-levels(data_cs$W1DADED)[levels(data_cs$W1DADED)=="4"] = "14"
-levels(data_cs$W1DADED)[levels(data_cs$W1DADED)=="3"] = "12"
-levels(data_cs$W1DADED)[levels(data_cs$W1DADED)=="2"] = "12"
-levels(data_cs$W1DADED)[levels(data_cs$W1DADED)=="1"] = "8"
-data_cs$W1DADED <- as.numeric(levels(data_cs$W1DADED))[data_cs$W1DADED]
+data_cs$W1DADED[data_cs$W1DADED==9] = 22
+data_cs$W1DADED[data_cs$W1DADED==8] = 18
+data_cs$W1DADED[data_cs$W1DADED==7] = 18
+data_cs$W1DADED[data_cs$W1DADED==6] = 16
+data_cs$W1DADED[data_cs$W1DADED==5] = 14
+data_cs$W1DADED[data_cs$W1DADED==4] = 14
+data_cs$W1DADED[data_cs$W1DADED==3] = 12
+data_cs$W1DADED[data_cs$W1DADED==2] = 12
+data_cs$W1DADED[data_cs$W1DADED==1] = 8
+data_cs$W1DADED <- as.numeric(data_cs$W1DADED)[data_cs$W1DADED]
 summary(data_cs$W1DADED)
 
-levels(data_cs$W5MOMED)[levels(data_cs$W5MOMED)=="9"] = "22"
-levels(data_cs$W5MOMED)[levels(data_cs$W5MOMED)=="8"] = "18"
-levels(data_cs$W5MOMED)[levels(data_cs$W5MOMED)=="7"] = "18"
-levels(data_cs$W5MOMED)[levels(data_cs$W5MOMED)=="6"] = "16"
-levels(data_cs$W5MOMED)[levels(data_cs$W5MOMED)=="5"] = "14"
-levels(data_cs$W5MOMED)[levels(data_cs$W5MOMED)=="4"] = "14"
-levels(data_cs$W5MOMED)[levels(data_cs$W5MOMED)=="3"] = "12"
-levels(data_cs$W5MOMED)[levels(data_cs$W5MOMED)=="2"] = "12"
-levels(data_cs$W5MOMED)[levels(data_cs$W5MOMED)=="1"] = "8"
-data_cs$W5MOMED <- as.numeric(levels(data_cs$W5MOMED))[data_cs$W5MOMED]
+data_cs$W5MOMED[data_cs$W5MOMED==9] = 22
+data_cs$W5MOMED[data_cs$W5MOMED==8] = 18
+data_cs$W5MOMED[data_cs$W5MOMED==7] = 18
+data_cs$W5MOMED[data_cs$W5MOMED==6] = 16
+data_cs$W5MOMED[data_cs$W5MOMED==5] = 14
+data_cs$W5MOMED[data_cs$W5MOMED==4] = 14
+data_cs$W5MOMED[data_cs$W5MOMED==3] = 12
+data_cs$W5MOMED[data_cs$W5MOMED==2] = 12
+data_cs$W5MOMED[data_cs$W5MOMED==1] = 8
+data_cs$W5MOMED <- as.numeric(data_cs$W5MOMED)[data_cs$W5MOMED]
 summary(data_cs$W5MOMED)
 
-levels(data_cs$W5DADED)[levels(data_cs$W5DADED)=="9"] = "22"
-levels(data_cs$W5DADED)[levels(data_cs$W5DADED)=="8"] = "18"
-levels(data_cs$W5DADED)[levels(data_cs$W5DADED)=="7"] = "18"
-levels(data_cs$W5DADED)[levels(data_cs$W5DADED)=="6"] = "16"
-levels(data_cs$W5DADED)[levels(data_cs$W5DADED)=="5"] = "14"
-levels(data_cs$W5DADED)[levels(data_cs$W5DADED)=="4"] = "14"
-levels(data_cs$W5DADED)[levels(data_cs$W5DADED)=="3"] = "12"
-levels(data_cs$W5DADED)[levels(data_cs$W5DADED)=="2"] = "12"
-levels(data_cs$W5DADED)[levels(data_cs$W5DADED)=="1"] = "8"
-data_cs$W5DADED <- as.numeric(levels(data_cs$W5DADED))[data_cs$W5DADED]
+data_cs$W5DADED[data_cs$W5DADED==9] = 22
+data_cs$W5DADED[data_cs$W5DADED==8] = 18
+data_cs$W5DADED[data_cs$W5DADED==7] = 18
+data_cs$W5DADED[data_cs$W5DADED==6] = 16
+data_cs$W5DADED[data_cs$W5DADED==5] = 14
+data_cs$W5DADED[data_cs$W5DADED==4] = 14
+data_cs$W5DADED[data_cs$W5DADED==3] = 12
+data_cs$W5DADED[data_cs$W5DADED==2] = 12
+data_cs$W5DADED[data_cs$W5DADED==1] = 8
+data_cs$W5DADED <- as.numeric(data_cs$W5DADED)[data_cs$W5DADED]
 summary(data_cs$W5DADED)
 ```
 
@@ -168,20 +172,21 @@ summary(data_cs$W5DADED)
 #which(colnames(data_cs)=="P5SPTEVT")
 #which(colnames(data_cs)=="P1SPORT")
 #which(colnames(data_cs)=="WKMOMED")
-data_org <- data_cs
-data_cs <- select(data_cs, -"C6R4RSCL", -"C6R4MSCL", -"C6R2SSCL", -"C7R4RSCL", -"C7R4MSCL", -"C7R2SSCL", -"C7R4RSCL", -"C7R4MSCL", -"C7R2SSCL", -"T4LEARN", -"T6LEARN", -"C1RGSCAL", -"C2RGSCAL", -"C5R2SSCL")
 colnames(data_cs)
 
 #change the column names to avoid confusion
-colnames(data_cs)[42] <- "P1SPRTS"
-colnames(data_cs)[55] <- "P5SPRTS"
-colnames(data_cs)[60] <- "P5SPORT"
-
-colnames(data_cs)[17] <- "W0MOMED"
-colnames(data_cs)[18] <- "W0DADED"
-colnames(data_cs)[19] <- "W0MOMSCR"
-colnames(data_cs)[20] <- "W0DADSCR"
-colnames(data_cs)[21] <- "W0INCOME"
+which(colnames(data_cs)=="P1SPORT")
+colnames(data_cs)[46] <- "P1SPRTS"
+which(colnames(data_cs)=="P5SPORT")
+colnames(data_cs)[59] <- "P5SPRTS"
+which(colnames(data_cs)=="P5SPTEVT")
+colnames(data_cs)[64] <- "P5SPORT"
+which(colnames(data_cs)=="WKMOMED")
+colnames(data_cs)[21] <- "W0MOMED"
+colnames(data_cs)[22] <- "W0DADED"
+colnames(data_cs)[23] <- "W0MOMSCR"
+colnames(data_cs)[24] <- "W0DADSCR"
+colnames(data_cs)[25] <- "W0INCOME"
 colnames(data_cs)
 
 #change to panel format
