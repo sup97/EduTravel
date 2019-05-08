@@ -2,9 +2,11 @@
 title: "Education and travel: DID"
 ---
 
-```{r load packages}
+```{r load packages, include=FALSE}
 library(dplyr)
 library(tidyr)
+library(haven)
+library(readr)
 ```
 
 
@@ -13,8 +15,10 @@ library(tidyr)
 rm(list=ls())
 
 #load imputed data
-setwd("C:/Users/soyou/Box Sync/Research/Educational benefits/education and travel (sup97@psu.edu)/R")
-data_nt_imp<- read_csv("C:/Users/soyou/Box Sync/Research/Educational benefits/education and travel (sup97@psu.edu)/R/mice_imp_5.csv")
+setwd("~/GitHub/EduTravel")
+#setwd("C:/Users/soyou/Box Sync/Research/Educational benefits/education and travel (sup97@psu.edu)/R")
+#data_nt_imp<- read_csv("C:/Users/soyou/Box Sync/Research/Educational benefits/education and travel (sup97@psu.edu)/R/mice_imp_5.csv")
+data_nt_imp<- read_csv("C:/Users/sup97/Box Sync/Research/Educational benefits/education and travel (sup97@psu.edu)/R/mice_imp_5.csv")
 #setwd("~/Box Sync/education and travel/R")
 #load("~/Box Sync/education and travel/R/data_knn.RData")
 #summary(data.knn)
@@ -185,6 +189,7 @@ colnames(data_cs)
 #change to panel format
 data_cs$X1 <- NULL
 
+library(reshape2)
 #"PARENTID", "S1_ID", "CREGION", "DOBYY", "GENDER", "RACE" , "white", "black", "asian", "hispanic", "C1R4RSCL", 	 "C1R4MSCL", "C2R4RSCL", 	"C2R4MSCL", "C4R4RSCL", 	"C4R4MSCL", 	"C5R4RSCL", 	"C5R4MSCL", 	"T1LEARN", 	"T2LEARN","T4LEARN", 	"T5LEARN", 	"W0MOMED", "W0DADED", 	"W0MOMSCR", 	"W0DADSCR", 	"W0INCOME", 	"W1MOMED", 	"W1DADED", 	"W1MOMSCR", 	"W1DADSCR", 	"W1INCOME", "W5MOMED", 	"W5DADED", 	"W5MOMSCR", 	"W5DADSCR", 	"C1SCREEN", 	"C2SCREEN", 	"C5SCREEN", 	"P1EXPECT", 	"P1READBO", "P1TELLST", 	"P1SINGSO", 	"P1HELPAR", 	"P1GAMES", 	"P1NATURE", 	"P1BUILD", 	"P1SPRTS", 	"P2CONCRT", 	"P2MUSEUM", "P2ZOO", 	"P2SPORT", 	"P2INCOME", 	"P5EXPECT", 	"P5TELLST", 	"P5SINGSO", 	"P5HELPAR", 	"P5GAMES", 	"P5NATURE", "P5BUILD", 	"P5SPRTS", 	"P5READBO", 	"P5CONCRT", 	"P5MUSEUM", 	"P5ZOO", 	"P5SPORT", 	"P5TINCTH"
 data_rs <- melt(data_cs, id.vars = c("CHILDID","PARENTID", "S1_ID", "CREGION", "DOBYY", "GENDER", "RACE" , "white", "black", "asian", "hispanic"))
 
@@ -257,6 +262,8 @@ data$didM = data$time * data$treatedM
 data$didS = data$time * data$treatedS
 data$didC = data$time * data$treatedC
 data$didZ = data$time * data$treatedZ
+
+summary(data)
 ```
 
 ```{r}
