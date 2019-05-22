@@ -47,10 +47,11 @@ predict ses
 gen treated1 = 0
 gen treated2 = 0
 gen treated3 = 0
+gen treated4 = 0
 bysort childid (round): replace treated1 = 1 if trip[3] > 0
 bysort childid (round): replace treated2 = 1 if trip[5] > 0 
 bysort childid (round): replace treated3 = 1 if trip[3] > 0 & trip[5] > 0 
-
+bysort childid (round): replace treated4 = 1 if trip[3] > 1 & trip[5] > 1
 //generate treated variable - specific activities
 //wave 2
 gen tmuseum = 0
@@ -164,6 +165,24 @@ diff reading, t(treated3) p(time) cov(gender white black asian hispanic expect l
 english timewchildren ses) ps(psm) robust report 
 
 diff math, t(treated3) p(time) cov(gender white black asian hispanic expect learn ///
+english timewchildren ses) ps(psm) robust report
+
+set more off
+drop psm psm_block
+qui pscore treated4 gender white black asian hispanic expect learn ///
+english timewchildren ses [pw=c245pw0], pscore(psm) logit blockid(psm_block) detail
+//psgraph, treated(treated3) pscore(psm) 
+
+qui psmatch2 treated4, outcome(reading) pscore(psm)
+qui psmatch2 treated4, outcome(math) pscore(psm)
+
+qui pstest gender white black asian hispanic expect learn ///
+english timewchildren ses, treated(treated3) both graph
+
+diff reading, t(treated4) p(time) cov(gender white black asian hispanic expect learn ///
+english timewchildren ses) ps(psm) robust report 
+
+diff math, t(treated4) p(time) cov(gender white black asian hispanic expect learn ///
 english timewchildren ses) ps(psm) robust report
 
 //Museum//
