@@ -103,7 +103,69 @@ sum n
 drop if reading ==. & round !=0
 drop if math ==. & round !=0
 
+*summaries*
 sum n
+//trip//
+sum trip if white==1 & round==2
+sum trip if black==1 & round==2
+sum trip if asian==1 & round==2
+sum trip if hispanic==1 & round==2
+sum trip if white==0 & black==0 & asian==0 & round==2
+
+sum trip if white==1 & round==5
+sum trip if black==1 & round==5
+sum trip if asian==1 & round==5
+sum trip if hispanic==1 & round==5
+sum trip if white==0 & black==0 & asian==0 & round==5
+
+//museum//
+sum museum if white==1 & round==2
+sum museum if black==1 & round==2
+sum museum if asian==1 & round==2
+sum museum if hispanic==1 & round==2
+sum museum if white==0 & black==0 & asian==0 & round==2
+
+sum museum if white==1 & round==5
+sum museum if black==1 & round==5
+sum museum if asian==1 & round==5
+sum museum if hispanic==1 & round==5
+sum museum if white==0 & black==0 & asian==0 & round==5
+
+//sports//
+sum sport if white==1 & round==2
+sum sport if black==1 & round==2
+sum sport if asian==1 & round==2
+sum sport if hispanic==1 & round==2
+sum sport if white==0 & black==0 & asian==0 & round==2
+
+sum sport if white==1 & round==5
+sum sport if black==1 & round==5
+sum sport if asian==1 & round==5
+sum sport if hispanic==1 & round==5
+sum sport if white==0 & black==0 & asian==0 & round==5
+
+//SES
+qui sum ses, detail
+
+egen p1 = pctile(ses), p(1)
+egen p25 = pctile(ses), p(25)
+egen p50 = pctile(ses), p(50)
+egen p75 = pctile(ses), p(75)
+egen p99 = pctile(ses), p(99)
+
+foreach var of varlist concrt museum sport trip {
+sum `var' if inrange(ses, p1, p25) & round==2
+sum `var' if inrange(ses, p25, p50) & round==2
+sum `var' if inrange(ses, p50, p75) & round==2
+sum `var' if inrange(ses, p75, p99) & round==2
+}
+
+foreach var of varlist museum sport trip {
+sum `var' if inrange(ses, p1, p25) & round==5
+sum `var' if inrange(ses, p25, p50) & round==5
+sum `var' if inrange(ses, p50, p75) & round==5
+sum `var' if inrange(ses, p75, p99) & round==5
+}
 
 * DID without cov*
 diff reading, t(treated) p(time)
