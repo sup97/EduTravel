@@ -19,7 +19,7 @@ setwd("~/GitHub/EduTravel")
 #setwd("C:/Users/soyou/Box Sync/Research/Educational benefits/education and travel (sup97@psu.edu)/R")
 #data_nt_imp<- read_csv("C:/Users/soyou/Box Sync/Research/Educational benefits/education and travel (sup97@psu.edu)/R/mice_imp_5.csv")
 
-data_nt_imp<- read_csv("C:/Users/sup97/Box Sync/Research/Educational benefits/education and travel (sup97@psu.edu)/R/mice_imp_5.csv")
+data_nt_imp<- read_csv("C:/Users/sup97/Box Sync/Research/In preparation/Educational benefits/education and travel (sup97@psu.edu)/R/mice_imp_5.csv")
 #setwd("~/Box Sync/education and travel/R")
 #load("~/Box Sync/education and travel/R/data_knn.RData")
 #summary(data.knn)
