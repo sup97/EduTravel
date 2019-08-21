@@ -20,7 +20,7 @@ set.seed(20181205)
 
 ```{r data read}
 library(haven)
-data <- read_dta("C:/Users/sup97/Box Sync/Research/Educational benefits/education and travel/eclsk_1998/data/initial_data_0515.dta")
+data <- read_dta("C:/Users/sup97/Box Sync/Research/In preparation/Educational benefits/education and travel/eclsk_1998/data/initial_data_0515.dta")
 #data <- read_dta("C:/Users/soyou/Box Sync/education and travel/eclsk_1998/data/initial_data_0515.dta")
 #View(regression_data_0515)
 
@@ -74,7 +74,7 @@ lapply(data_nt[1:63], function(x) sum(is.na(x))/length(x)) # highest missing per
 ```
 
 ```{r}
-#imputation using VIM package
+#imputation 
 weight <- select(data_nt, C245PW0)
 data_nt <- select(data_nt, -contains("C245PW0")) # remove the weight variable
 
@@ -98,7 +98,26 @@ idWeight$childid <- data_nt1$CHILDID
 write.csv(idWeight, file="id_weight.csv")
 
 library(mice)
-data.mice <- mice(data_nt1,m=5,maxit=5,seed=500)
+#data.mice <- mice(data_nt1,m=5,maxit=5,seed=500)
+data.mice <- load("C:/Users/sup97/Box Sync/Research/In preparation/Educational benefits/education and travel (sup97@psu.edu)/R/data_mice.RData")
+#Pool WQS results and decrease in order of weights.
+data.mice.pooled <-   pool.mi(data.mice)
+data.mice.dec <- c( order(data.mice.pooled$pooled.mean[1:14], decreasing = TRUE), 15:16)
+wqs.results.pooled <-  wqs.results.pooled[ weight.dec, ]
+wqs.results.pooled
+
+#When there is 1 estimate (p = 1)
+a <-   pool.mi(wqs.pool.test[1, , , drop = FALSE], n = 1000)
+a
+
+#For single imputation (K = 1):
+b<-   pool.mi(wqs.pool.test[ , , 1 , drop = FALSE], n = 1000)
+b
+
+#Odds ratio and 95% CI using the CLT.
+odds.ratio <- exp( data.mice.pooled[15:16, c("pooled.mean", "CI.1", "CI.2")] )
+odds.ratio
+
 save(data.mice, file="data_mice.RData")
 
 data.knn <- VIM::kNN(data_nt1, k = 3, weights = NULL, numFun = median, catFun = maxCat, impNA = TRUE, trace = TRUE, imp_var = TRUE, imp_suffix = "imp", addRandom = FALSE, useImputedDist = TRUE, weightDist = FALSE) #median

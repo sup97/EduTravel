@@ -47,10 +47,11 @@ predict ses
 gen treated1 = 0
 gen treated2 = 0
 gen treated3 = 0
+gen treated4 = 0
 bysort childid (round): replace treated1 = 1 if trip[3] > 0
 bysort childid (round): replace treated2 = 1 if trip[5] > 0 
 bysort childid (round): replace treated3 = 1 if trip[3] > 0 & trip[5] > 0 
-
+bysort childid (round): replace treated4 = 1 if trip[3] > 1 & trip[5] > 1
 //generate treated variable - specific activities
 //wave 2
 gen tmuseum = 0
@@ -102,7 +103,69 @@ sum n
 drop if reading ==. & round !=0
 drop if math ==. & round !=0
 
+*summaries*
 sum n
+//trip//
+sum trip if white==1 & round==2
+sum trip if black==1 & round==2
+sum trip if asian==1 & round==2
+sum trip if hispanic==1 & round==2
+sum trip if white==0 & black==0 & asian==0 & round==2
+
+sum trip if white==1 & round==5
+sum trip if black==1 & round==5
+sum trip if asian==1 & round==5
+sum trip if hispanic==1 & round==5
+sum trip if white==0 & black==0 & asian==0 & round==5
+
+//museum//
+sum museum if white==1 & round==2
+sum museum if black==1 & round==2
+sum museum if asian==1 & round==2
+sum museum if hispanic==1 & round==2
+sum museum if white==0 & black==0 & asian==0 & round==2
+
+sum museum if white==1 & round==5
+sum museum if black==1 & round==5
+sum museum if asian==1 & round==5
+sum museum if hispanic==1 & round==5
+sum museum if white==0 & black==0 & asian==0 & round==5
+
+//sports//
+sum sport if white==1 & round==2
+sum sport if black==1 & round==2
+sum sport if asian==1 & round==2
+sum sport if hispanic==1 & round==2
+sum sport if white==0 & black==0 & asian==0 & round==2
+
+sum sport if white==1 & round==5
+sum sport if black==1 & round==5
+sum sport if asian==1 & round==5
+sum sport if hispanic==1 & round==5
+sum sport if white==0 & black==0 & asian==0 & round==5
+
+//SES
+qui sum ses, detail
+
+egen p1 = pctile(ses), p(1)
+egen p25 = pctile(ses), p(25)
+egen p50 = pctile(ses), p(50)
+egen p75 = pctile(ses), p(75)
+egen p99 = pctile(ses), p(99)
+
+foreach var of varlist concrt museum sport trip {
+sum `var' if inrange(ses, p1, p25) & round==2
+sum `var' if inrange(ses, p25, p50) & round==2
+sum `var' if inrange(ses, p50, p75) & round==2
+sum `var' if inrange(ses, p75, p99) & round==2
+}
+
+foreach var of varlist museum sport trip {
+sum `var' if inrange(ses, p1, p25) & round==5
+sum `var' if inrange(ses, p25, p50) & round==5
+sum `var' if inrange(ses, p50, p75) & round==5
+sum `var' if inrange(ses, p75, p99) & round==5
+}
 
 * DID without cov*
 diff reading, t(treated) p(time)
@@ -167,6 +230,24 @@ diff reading, t(treated3) p(time) cov(gender white black asian hispanic expect l
 english timewchildren ses) ps(psm) robust report 
 
 diff math, t(treated3) p(time) cov(gender white black asian hispanic expect learn ///
+english timewchildren ses) ps(psm) robust report
+
+set more off
+drop psm psm_block
+qui pscore treated4 gender white black asian hispanic expect learn ///
+english timewchildren ses [pw=c245pw0], pscore(psm) logit blockid(psm_block) detail
+//psgraph, treated(treated3) pscore(psm) 
+
+qui psmatch2 treated4, outcome(reading) pscore(psm)
+qui psmatch2 treated4, outcome(math) pscore(psm)
+
+qui pstest gender white black asian hispanic expect learn ///
+english timewchildren ses, treated(treated3) both graph
+
+diff reading, t(treated4) p(time) cov(gender white black asian hispanic expect learn ///
+english timewchildren ses) ps(psm) robust report 
+
+diff math, t(treated4) p(time) cov(gender white black asian hispanic expect learn ///
 english timewchildren ses) ps(psm) robust report
 
 //Museum//
