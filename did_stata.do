@@ -1,12 +1,12 @@
-import delimited C:\Users\soyou\Documents\GitHub\EduTravel\id_weight.csv, varnames(1) clear 
+import delimited  /Users/soyoung/Documents/GitHub/EduTravel/id_weight.csv, varnames(1) clear 
 drop v1
-save C:\Users\soyou\Documents\GitHub\EduTravel\weights, replace
+save  /Users/soyoung/Documents/GitHub/EduTravel/weights, replace
 
-import delimited C:\Users\soyou\Documents\GitHub\EduTravel\final_data_0226.csv, ///
+import delimited  /Users/soyoung/Documents/GitHub/EduTravel/final_data_0226.csv, ///
  numericcols(8/44) clear
 
-merge m:m childid using C:\Users\soyou\Documents\GitHub\EduTravel\weights 
-save C:\Users\soyou\Documents\GitHub\EduTravel\final_data_0226, replace
+merge m:m childid using  /Users/soyoung/Documents/GitHub/EduTravel/weights 
+save  /Users/soyoung/Documents/GitHub/EduTravel/final_data_0226, replace
 drop _merge
 
 set more off
@@ -124,8 +124,11 @@ qui pstest gender white black asian hispanic expect learn ///
 english timewchildren ses, treated(treated1) both graph
 graph export "C:\Users\soyou\Documents\GitHub\EduTravel\matched_trip.pdf", as(pdf) replace
 
+//reg reading gender white black asian hispanic expect learn ///
+english timewchildren ses
+
 diff reading, t(treated1) p(time) cov(gender white black asian hispanic expect learn ///
-english timewchildren ses) ps(psm) robust report 
+english timewchildren ses) cl(childid) ps(psm) robust report 
 
 diff math, t(treated1) p(time) cov(gender white black asian hispanic expect learn ///
 english timewchildren ses) ps(psm) robust report
