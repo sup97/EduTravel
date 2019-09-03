@@ -197,7 +197,7 @@ english timewchildren ses, treated(treated1) both graph
 //english timewchildren ses
 
 diff reading, t(treated1) p(wave2) cov(gender white black asian hispanic expect learn ///
-english timewchildren ses) cl(childid) ps(psm) robust report 
+english timewchildren ses) ps(psm) cl(s1_id) robust report 
 
 diff math, t(treated1) p(wave2) cov(gender white black asian hispanic expect learn ///
 english timewchildren ses) ps(psm) robust report
@@ -409,10 +409,10 @@ english timewchildren ses, treated(tsport1) both graph
 //graph export "C:\Users\soyou\Documents\GitHub\EduTravel\matched_sport.pdf", as(pdf) replace
 
 diff reading, t(tsport1) p(wave5) cov(gender white black asian hispanic expect learn ///
-english timewchildren ses) ps(psm) robust report
+english timewchildren ses) ps(psm) cl(s1_id) robust report
 
 diff math, t(tsport1) p(wave5) cov(gender white black asian hispanic expect learn ///
-english timewchildren ses) ps(psm) robust report
+english timewchildren ses) ps(psm) cl(s1_id) robust report
 
 ///wave 2 &5
 
